@@ -41,6 +41,16 @@ public class State {
 	public static final int ORIENT = 0;
 	public static final int SLOT = 1;
 	
+	/* 7 tetris objects shape
+	 *    1) O (Box)
+	 *    2) l (Line)
+	 *    3) L
+	 *    4)
+	 *    5)
+	 *    6)
+	 *    7) 
+	 */
+	
 	//possible orientations for a given piece type
 	protected static int[] pOrients = {1,2,4,4,4,2,2};
 	
@@ -243,7 +253,8 @@ public class State {
 					}
 					//lower the top
 					top[c]--;
-					while(top[c]>=1 && field[top[c]-1][c]==0)	top[c]--;
+					while(top[c]>=1 && field[top[c]-1][c]==0)	
+						top[c]--;
 				}
 			}
 		}
