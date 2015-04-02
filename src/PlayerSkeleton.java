@@ -47,7 +47,7 @@ public class PlayerSkeleton {
 			int maxHeight = getFieldAndTop(s, legalMoves[i], field, top);
 			
 			int numRowsRemoved = getNumberRowsRemoved(field, maxHeight);
-			double heuristics = getHeuristics(field, top, numRowsRemoved);
+			double heuristics = getHeuristics(field, top, numRowsRemoved, maxHeight);
 			
 			double cost = numRowsRemoved + heuristics; 
 					
@@ -79,9 +79,24 @@ public class PlayerSkeleton {
 		
 		int maxHeight = 0;
 		
-		for(int i=0; i<=pWidth; i++) {
+		int bottom = 0;
+		// find bottom
+		for(int i=0; i<pWidth; i++) {
 			int pSlot = i + slot;
 			
+		}
+		
+		// change field and top
+		maxHeight = bottom+pTop[0]-1; 
+				
+		for(int i=0; i<pWidth; i++) {
+			for(int height=bottom+pBottom[i]; 
+					height<bottom+pTop[i]; height++) {
+				field[i+slot][height] = 1;
+			}
+			
+			top[i+slot] = bottom+pTop[i]-1;
+			maxHeight = maxHeight < top[i+slot] ? top[i+slot] : maxHeight;
 		}
 		
 		
@@ -112,14 +127,14 @@ public class PlayerSkeleton {
 		return rowsCleared;
 	}
 	
-	private double getHeuristics(int[][] field, int[] top, int numRowsRemoved) {
+	private double getHeuristics(int[][] field, int[] top, int numRowsRemoved, int maxHeight) {
 		
 		// compute the sum
 		double sum = weight[DC_INDEX] 
 				+ weight[COL_HEIGHT_WEIGHT_INDEX] * sumOfColumnHeight(top, numRowsRemoved) 
-				+ weight[ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX] * sumOfAbsoluteDiffAdjacentColumnHeights(top, numRowsRemoved)
+				+ weight[ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX] * sumOfAbsoluteDiffAdjacentColumnHeights(top)
 				+ weight[MAXIMUM_COL_HEIGHT_WEIGHT_INDEX] * maximumColumnHeight(top, numRowsRemoved) 
-				+ weight[NUM_HOLES_WEIGHT_INDEX] * numberOfHoles(field);
+				+ weight[NUM_HOLES_WEIGHT_INDEX] * numberOfHoles(field, maxHeight);
 		
 		return sum;
 	}
@@ -129,12 +144,12 @@ public class PlayerSkeleton {
 		int sum = 0;
 		
 		for(int i=0; i<State.COLS; i++)
-			sum += top[i];
+			sum += (top[i]-numRowsRemoved);
 		
 		return sum;
 	}
 	
-	private int sumOfAbsoluteDiffAdjacentColumnHeights (int[] top, int numRowsRemoved) {
+	private int sumOfAbsoluteDiffAdjacentColumnHeights (int[] top) {
 		
 		int sumDiff = 0;
 		
@@ -152,11 +167,14 @@ public class PlayerSkeleton {
 			maxHeight = maxHeight < top[i] ? top[i] : maxHeight;
 		}
 		
-		return maxHeight;
+		return (maxHeight-numRowsRemoved);
 	}
 	
-	private int numberOfHoles(int[][] field) {
+	private int numberOfHoles(int[][] field, int maxHeight) {
 		
+		for(int height=0; height<=maxHeight; height++) {
+			
+		}
 		return 0;
 	}
 	
