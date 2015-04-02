@@ -1,8 +1,10 @@
+import java.util.Arrays;
+
 
 public class PlayerSkeleton {
 	
 	// get from the learning agent
-	private double[] weight = {0.0, -1/21.0, -1/21.0, -1/21.0, -1/21.0};
+	private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
 	
 	private static final int DC_INDEX = 0;
 	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
@@ -15,20 +17,18 @@ public class PlayerSkeleton {
 		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
 		
-		s.draw();
-		s.drawNext(0,0);
-		
 		while(!s.hasLost()) {
 			
 			int move = p.pickMove(s, s. legalMoves());
-			System.out.println("move " + move);
+			if(move < 0)
+				break;
 			s.makeMove(move);
 			
 			s.draw();
 			s.drawNext(0,0);
 			
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(300);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -39,14 +39,22 @@ public class PlayerSkeleton {
 	//implement this function to have a working system
 	public int pickMove(State s, int[][] legalMoves) {
 		
-		int move = 0;
-		double max = 0;
+		int move = -1;
+		double max = -Double.MAX_VALUE;
 		
 		for(int i=0; i<legalMoves.length; i++) {
 			
 			//change top and field according to the move
-			int[][] field = s.getField().clone();
-			int[] top = s.getTop().clone();
+			int[][] sField = s.getField();
+			int[][] field = new int[sField.length][];
+			
+			for(int j=0; j<sField.length; j++) {
+				int length = sField[j].length;
+				field[j] = new int[length];
+				System.arraycopy(sField[j], 0, field[j], 0, length);
+			}
+			
+			int[] top = Arrays.copyOf(s.getTop(), s.getTop().length);
 			
 			int maxHeight = getFieldAndTop(s, legalMoves[i], field, top);
 			
@@ -57,6 +65,7 @@ public class PlayerSkeleton {
 			double heuristics = getHeuristics(field, top, numRowsRemoved, maxHeight);
 			
 			double cost = numRowsRemoved + heuristics; 
+			System.out.println("numRows" + numRowsRemoved + " heuristics " + heuristics);
 					
 			if(max < cost) {
 				max = cost;
@@ -66,6 +75,7 @@ public class PlayerSkeleton {
 		
 		
 		return move;
+		
 	}
 	
 	// change field and top according to move
