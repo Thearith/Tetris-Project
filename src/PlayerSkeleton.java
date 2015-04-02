@@ -1,12 +1,26 @@
 
 public class PlayerSkeleton {
 	
+	// get from the learning agent
+	private double[] weight = {0.0, 0.0, 0.0, 0.0, 0.0};
+	
+	private static final int DC_INDEX = 0;
+	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
+	private static final int ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX = 2;
+	private static final int MAXIMUM_COL_HEIGHT_WEIGHT_INDEX = 3;
+	private static final int NUM_HOLES_WEIGHT_INDEX = 4;
+	
 	public static void main(String[] args) {
 		State s = new State();
 		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
 		while(!s.hasLost()) {
-			s.makeMove(p.pickMove(s,s.legalMoves()));
+			int move = p.pickMove(s,s.legalMoves());
+			System.out.println("move " + move);
+			//s.makeMove(p.pickMove(s,s.legalMoves()));
+			s.makeMove(move);
+			
+			
 			s.draw();
 			s.drawNext(0,0);
 			try {
@@ -22,10 +36,18 @@ public class PlayerSkeleton {
 	public int pickMove(State s, int[][] legalMoves) {
 		
 		int move = 0;
-		int max = 0;
+		double max = 0;
 		
 		for(int i=0; i<legalMoves.length; i++) {
-			int cost = findNumberRowsRemoved(s, legalMoves[i]);
+			
+			//change top and field according to the move
+			int[][] field = s.getField().clone();
+			int[] top = s.getTop().clone();
+			
+			int maxHeight = getFieldAndTop(s, legalMoves[i], field, top);
+			
+			double cost = findNumberRowsRemoved(field, maxHeight)
+					+ findHeuristics(field, top);
 			if(max < cost) {
 				max = cost;
 				move = i;
@@ -36,49 +58,33 @@ public class PlayerSkeleton {
 		return move;
 	}
 	
-	private int findNumberRowsRemoved (State s, int[] legalMove) {
+	// change field and top according to move
+	
+	private int getFieldAndTop(State s, int legalMove[], int[][] field
+			, int[] top) {
 		
-		int rowsCleared = 0;
-		
-		// info about the building
-		int[] top = s.getTop();
-		int[][] field = s.getField().clone();
-		
-		// info about this block piece
+		// Tetris block information (piece, orient, slot)
 		int piece = s.getNextPiece();
-		int slot = legalMove[State.SLOT];
 		int orient = legalMove[State.ORIENT];
+		int slot = legalMove[State.SLOT];
 		
+		// dimension of the piece with "orient" orientation
 		int[] pBottom = State.getpBottom()[piece][orient];
 		int[] pTop = State.getpTop()[piece][orient];
-		
 		int pWidth = State.getpWidth()[piece][orient];
 		int pHeight = State.getpHeight()[piece][orient];
 		
 		
-		// find the maximum height of the building when adding the piece block
-		int height = top[slot] - pBottom[0];	
-		for(int col = 1; col < pWidth; col++) {
-			height = Math.max(height,
-					top[slot+col] - pBottom[col]);
-		}
+		return 0;
+	}
+
+	private int findNumberRowsRemoved (int[][] field, int maxHeight) {
 		
-		//for each column in the piece
-		for(int i = 0; i < pWidth; i++) {
-			
-			//from bottom to top of brick
-			for(int h = height + pBottom[i]; 
-					h < height + pTop[i]; h++) {
-				System.out.println("h = " + h);
-				System.out.println("i+slot = " + (i+slot));
-				field[h][i+slot] = 1;
-			}
-		}
-		
+		int rowsCleared = 0;
 		
 		//check for complete rows - starting at the top
-		for(int row = height + pHeight - 1; 
-				row >= height; row--) {
+		for(int row = maxHeight; 
+				row >= 0; row--) {
 			
 			boolean full = true;
 			
@@ -95,6 +101,56 @@ public class PlayerSkeleton {
 		
 		return rowsCleared;
 	}
+	
+	private double findHeuristics(int[][] field, int[] top) {
+		
+		// compute the sum
+		double sum = weight[DC_INDEX] 
+				+ weight[COL_HEIGHT_WEIGHT_INDEX] * sumOfColumnHeight(top) 
+				+ weight[ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX] * sumOfAbsoluteDiffAdjacentColumnHeights(top)
+				+ weight[MAXIMUM_COL_HEIGHT_WEIGHT_INDEX] * maximumColumnHeight(top) 
+				+ weight[NUM_HOLES_WEIGHT_INDEX] * numberOfHoles(field);
+		
+		return sum;
+	}
+	
+	
+	private int sumOfColumnHeight(int[] top) {
+		int sum = 0;
+		
+		for(int i=0; i<State.COLS; i++)
+			sum += top[i];
+		
+		return sum;
+	}
+	
+	private int sumOfAbsoluteDiffAdjacentColumnHeights (int[] top) {
+		
+		int sumDiff = 0;
+		
+		for(int i=0; i<State.COLS-1; i++)
+			sumDiff += Math.abs(top[i]- top[i+1]);
+		
+		return sumDiff;
+	}
+	
+	private int maximumColumnHeight(int[] top) {
+		
+		int maxHeight = 0;
+		
+		for(int i=0; i<State.COLS; i++) {
+			maxHeight = maxHeight < top[i] ? top[i] : maxHeight;
+		}
+		
+		return maxHeight;
+	}
+	
+	private int numberOfHoles(int[][] field) {
+		
+		return 0;
+	}
+	
+	
 	
 	
 }
