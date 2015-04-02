@@ -2,7 +2,7 @@
 public class PlayerSkeleton {
 	
 	// get from the learning agent
-	private double[] weight = {0.0, 0.0, 0.0, 0.0, 0.0};
+	private double[] weight = {0.0, -1/21.0, -1/21.0, -1/21.0, -1/21.0};
 	
 	private static final int DC_INDEX = 0;
 	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
@@ -14,17 +14,21 @@ public class PlayerSkeleton {
 		State s = new State();
 		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
+		
+		s.draw();
+		s.drawNext(0,0);
+		
 		while(!s.hasLost()) {
-			int move = p.pickMove(s,s.legalMoves());
-			System.out.println("move " + move);
-			//s.makeMove(p.pickMove(s,s.legalMoves()));
-			s.makeMove(move);
 			
+			int move = p.pickMove(s, s. legalMoves());
+			System.out.println("move " + move);
+			s.makeMove(move);
 			
 			s.draw();
 			s.drawNext(0,0);
+			
 			try {
-				Thread.sleep(300);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -45,6 +49,9 @@ public class PlayerSkeleton {
 			int[] top = s.getTop().clone();
 			
 			int maxHeight = getFieldAndTop(s, legalMoves[i], field, top);
+			
+			if(maxHeight < 0)
+				continue; //this move will lose the game
 			
 			int numRowsRemoved = getNumberRowsRemoved(field, maxHeight);
 			double heuristics = getHeuristics(field, top, numRowsRemoved, maxHeight);
@@ -75,30 +82,30 @@ public class PlayerSkeleton {
 		int[] pBottom = State.getpBottom()[piece][orient];
 		int[] pTop = State.getpTop()[piece][orient];
 		int pWidth = State.getpWidth()[piece][orient];
-		int pHeight = State.getpHeight()[piece][orient];
-		
-		int maxHeight = 0;
+		int pHeight = State.getpHeight()[piece][orient];	
 		
 		int bottom = 0;
 		// find bottom
 		for(int i=0; i<pWidth; i++) {
-			int pSlot = i + slot;
-			
+			bottom = bottom < top[i+slot] ? top[i+slot] : bottom;
+		}
+		
+		if(bottom+pHeight >= State.ROWS) {
+			return -1;
 		}
 		
 		// change field and top
-		maxHeight = bottom+pTop[0]-1; 
-				
+		int maxHeight = 0;
+		
 		for(int i=0; i<pWidth; i++) {
 			for(int height=bottom+pBottom[i]; 
 					height<bottom+pTop[i]; height++) {
-				field[i+slot][height] = 1;
+				field[height][i+slot] = 1;
 			}
 			
-			top[i+slot] = bottom+pTop[i]-1;
+			top[i+slot] = bottom+pTop[i];
 			maxHeight = maxHeight < top[i+slot] ? top[i+slot] : maxHeight;
 		}
-		
 		
 		return maxHeight;
 	}
@@ -172,13 +179,14 @@ public class PlayerSkeleton {
 	
 	private int numberOfHoles(int[][] field, int maxHeight) {
 		
-		for(int height=0; height<=maxHeight; height++) {
-			
-		}
-		return 0;
-	}
-	
-	
-	
+		int numHoles = 0;
+		for(int row=0; row<maxHeight; row++)
+			for(int col=0; col<State.COLS; col++) {
+				if(field[row][col] == 0 && field[row+1][col] == 1)
+					numHoles++;
+			}
+		
+		return numHoles;
+	}	
 	
 }
