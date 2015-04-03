@@ -28,7 +28,7 @@ public class PlayerSkeleton {
 			s.drawNext(0,0);
 			
 			try {
-				Thread.sleep(300);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
