@@ -4,22 +4,26 @@ import java.util.Arrays;
 public class PlayerSkeleton {
 	
 	// get from the learning agent
-	private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
-	
+	//private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
+	private double[] weight = new double[5];
 	private static final int DC_INDEX = 0;
 	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
 	private static final int ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX = 2;
 	private static final int MAXIMUM_COL_HEIGHT_WEIGHT_INDEX = 3;
 	private static final int NUM_HOLES_WEIGHT_INDEX = 4;
 	
-	public static void main(String[] args) {
+	public PlayerSkeleton(double[] param) {
+		weight = param;
+	}
+	
+	public void run() {
 		State s = new State();
 		new TFrame(s);
-		PlayerSkeleton p = new PlayerSkeleton();
+		//PlayerSkeleton p = new PlayerSkeleton(param);
 		
 		while(!s.hasLost()) {
 			
-			int move = p.pickMove(s, s. legalMoves());
+			int move = this.pickMove(s, s. legalMoves());
 			if(move < 0)
 				break;
 			s.makeMove(move);
@@ -28,12 +32,16 @@ public class PlayerSkeleton {
 			s.drawNext(0,0);
 			
 			try {
+<<<<<<< HEAD
 				Thread.sleep(1000);
+=======
+				Thread.sleep(10);
+>>>>>>> e945b4ddd3a452ba19b80fc505e087fcb9136733
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+		//System.out.println("You have completed "+s.getRowsCleared()+" rows.");
 	}
 	
 	//implement this function to have a working system
@@ -65,7 +73,7 @@ public class PlayerSkeleton {
 			double heuristics = getHeuristics(field, top, numRowsRemoved, maxHeight);
 			
 			double cost = numRowsRemoved + heuristics; 
-			System.out.println("numRows" + numRowsRemoved + " heuristics " + heuristics);
+			//System.out.println("numRows" + numRowsRemoved + " heuristics " + heuristics);
 					
 			if(max < cost) {
 				max = cost;
