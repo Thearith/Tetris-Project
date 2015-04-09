@@ -49,7 +49,8 @@ public class PlayerSkeleton {
 			}
 		}
 		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
-		f = null;
+		System.out.printf("%f, %f, %f, %f, %f\n", weight[0], weight[1], weight[2], weight[3], weight[4]);
+		f.closeFrame();
 	}
 	
 	public int getRowsCleared(){
@@ -94,7 +95,7 @@ public class PlayerSkeleton {
 			}
 		}
 		
-		System.out.println("move made is " + move);
+		//System.out.println("move made is " + move);
 		return move;
 
 	}
