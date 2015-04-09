@@ -5,6 +5,8 @@ public class PlayerSkeleton {
 	
 	// get from the learning agent
 	//private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
+	private State s = null;
+	private TFrame f = null;
 	private double[] weight = new double[5];
 	private static final int DC_INDEX = 0;
 	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
@@ -13,14 +15,15 @@ public class PlayerSkeleton {
 	private static final int NUM_HOLES_WEIGHT_INDEX = 4;
 	
 	public PlayerSkeleton(double[] param) {
+		s = new State();
+		f = new TFrame(s);
 		weight = param;
 	}
 	
 	public void run() {
-		State s = new State();
-		new TFrame(s);
+		//State s = new State();
+		//new TFrame(s);
 		//PlayerSkeleton p = new PlayerSkeleton(param);
-		
 		while(!s.hasLost()) {
 			
 			int move = this.pickMove(s, s. legalMoves());
@@ -32,16 +35,17 @@ public class PlayerSkeleton {
 			s.drawNext(0,0);
 			
 			try {
-<<<<<<< HEAD
-				Thread.sleep(1000);
-=======
-				Thread.sleep(10);
->>>>>>> e945b4ddd3a452ba19b80fc505e087fcb9136733
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		//System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+		f = null;
+	}
+	
+	public int getRowsCleared(){
+		return s.getRowsCleared();
 	}
 	
 	//implement this function to have a working system
@@ -196,15 +200,19 @@ public class PlayerSkeleton {
 	}
 	
 	private int numberOfHoles(int[][] field, int maxHeight) {
-		
-		int numHoles = 0;
-		for(int row=0; row<maxHeight; row++)
-			for(int col=0; col<State.COLS; col++) {
-				if(field[row][col] == 0 && field[row+1][col] == 1)
-					numHoles++;
-			}
-		
-		return numHoles;
-	}	
-	
+		 
+		 int numHoles = 0;
+		 boolean hasHole = false;
+		 for(int col=0; col<State.COLS; col++) {
+			 hasHole = false;
+			 for(int row=maxHeight-1; row>=0; row--) {
+				 if(field[row][col] == 0 && (field[row+1][col] == 1 || hasHole)) {
+					 numHoles++; // there is a hole
+					 hasHole = true;
+				 }
+			 }
+		 }
+		 
+		 return numHoles;
+	}
 }
