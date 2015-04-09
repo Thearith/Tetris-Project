@@ -6,13 +6,16 @@ public class PlayerSkeleton {
 	//private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
 	private State s = null;
 	private TFrame f = null;
-	private double[] weight = new double[5];
+	private double[] weight = new double[NUM_WEIGHTS];
+	
+	private static final int NUM_WEIGHTS = 6;
 	
 	private static final int DC_INDEX = 0;
 	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
 	private static final int ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX = 2;
 	private static final int MAXIMUM_COL_HEIGHT_WEIGHT_INDEX = 3;
 	private static final int NUM_HOLES_WEIGHT_INDEX = 4;
+	private static final int COMPLETE_ROWS_INDEX = 5;
 	
 	static int index = 0;
 	
@@ -86,7 +89,7 @@ public class PlayerSkeleton {
 			int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
 			double heuristics = getHeuristics(field, top, numRowsRemoved, maxHeight);
 			//System.out.println("my move nw is " + thisMove + "utility is " + heuristics);
-			double cost = numRowsRemoved + heuristics; 
+			double cost = weight[COMPLETE_ROWS_INDEX] * numRowsRemoved + heuristics; 
 			//System.out.println("numRows" + numRowsRemoved + " heuristics " + heuristics);
 					
 			if(max < cost) {
