@@ -3,9 +3,11 @@ import java.util.Arrays;
 
 public class PlayerSkeleton {
 	
-	// get from the learning agent
-	private double[] weight = {0.4, -0.66569, -0.24077, -1/21.0, -0.46544};
-	//private double[] weight = new double[5];
+	//private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
+	private State s = null;
+	private TFrame f = null;
+	private double[] weight = new double[5];
+	
 	private static final int DC_INDEX = 0;
 	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
 	private static final int ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX = 2;
@@ -17,17 +19,21 @@ public class PlayerSkeleton {
 	
 //	public PlayerSkeleton(double[] param) {
 //		weight = param;
-//	}
+//	}		
 	
-	public static void main(String[] args) {
-		State s = new State();
-		new TFrame(s);
-		//PlayerSkeleton p = new PlayerSkeleton(param);
-		PlayerSkeleton p = new PlayerSkeleton();
+	public PlayerSkeleton(double[] param) {
+		s = new State();
+		f = new TFrame(s);
+		weight = param;
+	}
+	
+	public void run() {
+		//State s = new State();
+		//new TFrame(s);
 		
 		while(!s.hasLost()) {
 			
-			int move = p.pickMove(s, s.legalMoves());
+			int move = this.pickMove(s, s.legalMoves());
 			index++;
 			
 			if(move < 0) // every move will lose the game
@@ -38,12 +44,17 @@ public class PlayerSkeleton {
 			s.drawNext(0,0);
 			
 			try {
-				Thread.sleep(10);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+		f = null;
+	}
+	
+	public int getRowsCleared(){
+		return s.getRowsCleared();
 	}
 	
 	//implement this function to have a working system
@@ -92,8 +103,7 @@ public class PlayerSkeleton {
 		
 		System.out.println("move made is " + move);
 		return move;
-		
-		
+
 	}
 	
 	// change field and top according to move
@@ -215,6 +225,7 @@ public class PlayerSkeleton {
 		
 		int numHoles = 0;
 		boolean hasHole = false;
+		
 		for(int col=0; col<State.COLS; col++) {
 			hasHole = false;
 			for(int row=maxHeight-2; row>=0; row--) {
@@ -228,5 +239,4 @@ public class PlayerSkeleton {
 		
 		return numHoles;
 	}	
-	
 }
