@@ -136,7 +136,7 @@ public class PlayerSkeleton {
 		
 		for(int i=0; i<pWidth; i++) {
 			for(int height=bottom+pBottom[i]; 
-					height<bottom+pTop[i]-1; height++) {
+					height<bottom+pTop[i]; height++) {
 				field[height][i+slot] = 1;
 			}
 			
