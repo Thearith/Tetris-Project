@@ -38,6 +38,11 @@ public class TFrame extends JFrame implements KeyListener{
 		setVisible(true);
 	}
 	
+	public void closeFrame(){
+		setVisible(false);
+		dispose();
+	}
+	
 	//switches which state is attached to this TFrame
 	public void bindState(State s) {
 		if(s!= null)	s.label = null;
