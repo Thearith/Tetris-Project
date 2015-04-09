@@ -12,6 +12,7 @@ public class GeneticAlgorithm {
 	final int parentUsePercent = 10;
 	
 	public GeneticAlgorithm() {
+		
 		for (int i=0; i < populationSize; i++) {
 			Candidate c = new Candidate();
 			c.random();
@@ -21,6 +22,10 @@ public class GeneticAlgorithm {
 		System.out.println("out of for loop");
 		//Collections.sort(population);	// sort method
 		System.out.println("population completed");
+	}
+	
+	LinkedList<Candidate> getBestTen() {
+		return population;
 	}
 	
 	Candidate getFittest() {
@@ -70,7 +75,7 @@ public class GeneticAlgorithm {
 			child1 = childs[0];
 			child2 = childs[1];
 			
-			double mutatePercent = 0.01;
+			double mutatePercent = 0.05;
 			boolean m1 = rand.nextFloat() <= mutatePercent;
 			boolean m2 = rand.nextFloat() <= mutatePercent;
 			if (m1) mutate(child1);
