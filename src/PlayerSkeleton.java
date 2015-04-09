@@ -4,27 +4,33 @@ import java.util.Arrays;
 public class PlayerSkeleton {
 	
 	// get from the learning agent
-	//private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
-	private double[] weight = new double[5];
+	private double[] weight = {0.4, -0.66569, -0.24077, -1/21.0, -0.46544};
+	//private double[] weight = new double[5];
 	private static final int DC_INDEX = 0;
 	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
 	private static final int ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX = 2;
 	private static final int MAXIMUM_COL_HEIGHT_WEIGHT_INDEX = 3;
 	private static final int NUM_HOLES_WEIGHT_INDEX = 4;
 	
-	public PlayerSkeleton(double[] param) {
-		weight = param;
-	}
+	private static int thisMove = 0;
+	static int index = 0;
 	
-	public void run() {
+//	public PlayerSkeleton(double[] param) {
+//		weight = param;
+//	}
+	
+	public static void main(String[] args) {
 		State s = new State();
 		new TFrame(s);
 		//PlayerSkeleton p = new PlayerSkeleton(param);
+		PlayerSkeleton p = new PlayerSkeleton();
 		
 		while(!s.hasLost()) {
 			
-			int move = this.pickMove(s, s. legalMoves());
-			if(move < 0)
+			int move = p.pickMove(s, s.legalMoves());
+			index++;
+			
+			if(move < 0) // every move will lose the game
 				break;
 			s.makeMove(move);
 			
@@ -32,16 +38,12 @@ public class PlayerSkeleton {
 			s.drawNext(0,0);
 			
 			try {
-<<<<<<< HEAD
-				Thread.sleep(1000);
-=======
 				Thread.sleep(10);
->>>>>>> e945b4ddd3a452ba19b80fc505e087fcb9136733
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		//System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
 	}
 	
 	//implement this function to have a working system
@@ -52,9 +54,12 @@ public class PlayerSkeleton {
 		
 		for(int i=0; i<legalMoves.length; i++) {
 			
+			thisMove = i;
+			
 			//change top and field according to the move
 			int[][] sField = s.getField();
 			int[][] field = new int[sField.length][];
+			
 			
 			for(int j=0; j<sField.length; j++) {
 				int length = sField[j].length;
@@ -64,14 +69,18 @@ public class PlayerSkeleton {
 			
 			int[] top = Arrays.copyOf(s.getTop(), s.getTop().length);
 			
+			if(index == 1 && i == 2) {
+				System.out.println("eh ");
+			}
+			
 			int maxHeight = getFieldAndTop(s, legalMoves[i], field, top);
 			
 			if(maxHeight < 0)
 				continue; //this move will lose the game
 			
-			int numRowsRemoved = getNumberRowsRemoved(field, maxHeight);
+			int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
 			double heuristics = getHeuristics(field, top, numRowsRemoved, maxHeight);
-			
+			//System.out.println("my move nw is " + thisMove + "utility is " + heuristics);
 			double cost = numRowsRemoved + heuristics; 
 			//System.out.println("numRows" + numRowsRemoved + " heuristics " + heuristics);
 					
@@ -81,8 +90,9 @@ public class PlayerSkeleton {
 			}
 		}
 		
-		
+		System.out.println("move made is " + move);
 		return move;
+		
 		
 	}
 	
@@ -92,7 +102,7 @@ public class PlayerSkeleton {
 			, int[] top) {
 		
 		// Tetris block information (piece, orient, slot)
-		int piece = s.getNextPiece();
+ 		int piece = s.getNextPiece();
 		int orient = legalMove[State.ORIENT];
 		int slot = legalMove[State.SLOT];
 		
@@ -102,10 +112,10 @@ public class PlayerSkeleton {
 		int pWidth = State.getpWidth()[piece][orient];
 		int pHeight = State.getpHeight()[piece][orient];	
 		
-		int bottom = 0;
+		int bottom = top[slot] - pBottom[0];
 		// find bottom
-		for(int i=0; i<pWidth; i++) {
-			bottom = bottom < top[i+slot] ? top[i+slot] : bottom;
+		for(int i=1; i<pWidth; i++) {
+			bottom = bottom < (top[i+slot]-pBottom[i]) ? (top[i+slot]-pBottom[i]) : bottom;
 		}
 		
 		if(bottom+pHeight >= State.ROWS) {
@@ -113,27 +123,25 @@ public class PlayerSkeleton {
 		}
 		
 		// change field and top
-		int maxHeight = 0;
 		
 		for(int i=0; i<pWidth; i++) {
 			for(int height=bottom+pBottom[i]; 
-					height<bottom+pTop[i]; height++) {
+					height<bottom+pTop[i]-1; height++) {
 				field[height][i+slot] = 1;
 			}
 			
 			top[i+slot] = bottom+pTop[i];
-			maxHeight = maxHeight < top[i+slot] ? top[i+slot] : maxHeight;
 		}
 		
-		return maxHeight;
+		return bottom+pHeight;
 	}
 
-	private int getNumberRowsRemoved (int[][] field, int maxHeight) {
+	private int getNumberRowsRemoved (int[][] field, int[] top, int maxHeight) {
 		
 		int rowsCleared = 0;
 		
 		//check for complete rows - starting at the top
-		for(int row = maxHeight; 
+		for(int row = maxHeight-1; 
 				row >= 0; row--) {
 			
 			boolean full = true;
@@ -145,8 +153,22 @@ public class PlayerSkeleton {
 				}
 			}
 			
-			if(full)
+			if(full) {
 				rowsCleared++;
+				
+				for(int col = 0; col < State.COLS; col++) {
+
+					//slide down all bricks
+					for(int i = row; i < top[col]; i++) {
+						field[i][col] = field[i+1][col];
+					}
+					//lower the top
+					top[col]--;
+					while(top[col]>=1 && field[top[col]-1][col]==0)	
+						top[col]--;
+				}
+				
+			}
 		}
 		
 		return rowsCleared;
@@ -156,20 +178,20 @@ public class PlayerSkeleton {
 		
 		// compute the sum
 		double sum = weight[DC_INDEX] 
-				+ weight[COL_HEIGHT_WEIGHT_INDEX] * sumOfColumnHeight(top, numRowsRemoved) 
+				+ weight[COL_HEIGHT_WEIGHT_INDEX] * sumOfColumnHeight(top) 
 				+ weight[ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX] * sumOfAbsoluteDiffAdjacentColumnHeights(top)
-				+ weight[MAXIMUM_COL_HEIGHT_WEIGHT_INDEX] * maximumColumnHeight(top, numRowsRemoved) 
+				+ weight[MAXIMUM_COL_HEIGHT_WEIGHT_INDEX] * maximumColumnHeight(maxHeight, numRowsRemoved) 
 				+ weight[NUM_HOLES_WEIGHT_INDEX] * numberOfHoles(field, maxHeight);
 		
 		return sum;
 	}
 	
 	
-	private int sumOfColumnHeight(int[] top, int numRowsRemoved) {
+	private int sumOfColumnHeight(int[] top) {
 		int sum = 0;
 		
 		for(int i=0; i<State.COLS; i++)
-			sum += (top[i]-numRowsRemoved);
+			sum += top[i];
 		
 		return sum;
 	}
@@ -184,13 +206,7 @@ public class PlayerSkeleton {
 		return sumDiff;
 	}
 	
-	private int maximumColumnHeight(int[] top, int numRowsRemoved) {
-		
-		int maxHeight = 0;
-		
-		for(int i=0; i<State.COLS; i++) {
-			maxHeight = maxHeight < top[i] ? top[i] : maxHeight;
-		}
+	private int maximumColumnHeight(int maxHeight, int numRowsRemoved) {
 		
 		return (maxHeight-numRowsRemoved);
 	}
@@ -198,11 +214,17 @@ public class PlayerSkeleton {
 	private int numberOfHoles(int[][] field, int maxHeight) {
 		
 		int numHoles = 0;
-		for(int row=0; row<maxHeight; row++)
-			for(int col=0; col<State.COLS; col++) {
-				if(field[row][col] == 0 && field[row+1][col] == 1)
-					numHoles++;
+		boolean hasHole = false;
+		for(int col=0; col<State.COLS; col++) {
+			hasHole = false;
+			for(int row=maxHeight-2; row>=0; row--) {
+				if(field[row][col] == 0 && (field[row+1][col] == 1 || hasHole)) {
+					numHoles++; // there is a hole
+					hasHole = true;
+				} else if(field[row][col] == 1)
+					hasHole = false;
 			}
+		}
 		
 		return numHoles;
 	}	
