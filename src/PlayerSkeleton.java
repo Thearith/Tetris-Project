@@ -14,7 +14,6 @@ public class PlayerSkeleton {
 	private static final int MAXIMUM_COL_HEIGHT_WEIGHT_INDEX = 3;
 	private static final int NUM_HOLES_WEIGHT_INDEX = 4;
 	
-	private static int thisMove = 0;
 	static int index = 0;
 	
 //	public PlayerSkeleton(double[] param) {
@@ -65,8 +64,6 @@ public class PlayerSkeleton {
 		
 		for(int i=0; i<legalMoves.length; i++) {
 			
-			thisMove = i;
-			
 			//change top and field according to the move
 			int[][] sField = s.getField();
 			int[][] field = new int[sField.length][];
@@ -79,10 +76,6 @@ public class PlayerSkeleton {
 			}
 			
 			int[] top = Arrays.copyOf(s.getTop(), s.getTop().length);
-			
-			if(index == 1 && i == 2) {
-				System.out.println("eh ");
-			}
 			
 			int maxHeight = getFieldAndTop(s, legalMoves[i], field, top);
 			
