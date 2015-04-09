@@ -188,7 +188,7 @@ public class PlayerSkeleton {
 				+ weight[COL_HEIGHT_WEIGHT_INDEX] * sumOfColumnHeight(top) 
 				+ weight[ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX] * sumOfAbsoluteDiffAdjacentColumnHeights(top)
 				+ weight[MAXIMUM_COL_HEIGHT_WEIGHT_INDEX] * maximumColumnHeight(maxHeight, numRowsRemoved) 
-				+ weight[NUM_HOLES_WEIGHT_INDEX] * numberOfHoles(field, maxHeight);
+				+ weight[NUM_HOLES_WEIGHT_INDEX] * numberOfHoles(field, top);
 		
 		return sum;
 	}
@@ -218,22 +218,24 @@ public class PlayerSkeleton {
 		return (maxHeight-numRowsRemoved);
 	}
 	
-	private int numberOfHoles(int[][] field, int maxHeight) {
+	private int numberOfHoles(int[][] field, int top[]) {
 		
 		int numHoles = 0;
 		boolean hasHole = false;
 		
 		for(int col=0; col<State.COLS; col++) {
 			hasHole = false;
-			for(int row=maxHeight-2; row>=0; row--) {
-				if(field[row][col] == 0 && (field[row+1][col] == 1 || hasHole)) {
+			
+			for(int row=top[col]-2; row>=0; row--) {
+				
+				if(field[row][col] == 0 && (field[row+1][col] != 0 || hasHole)) {
 					numHoles++; // there is a hole
 					hasHole = true;
-				} else if(field[row][col] == 1)
+				} else if(field[row][col] != 0)
 					hasHole = false;
 			}
 		}
 		
 		return numHoles;
-	}	
+	}
 }
