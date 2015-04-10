@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public class Candidate implements Comparable<Candidate>{
-	public static final int SIZE = 5;
+	public static final int SIZE = 6;
 	public double[] weights;
 	final Random rand = new Random();
 	
@@ -10,9 +10,10 @@ public class Candidate implements Comparable<Candidate>{
 	}
 	
 	void random() {
-		for (int i=0; i < weights.length; i++) {
+		for (int i=0; i < weights.length - 1; i++) {
 			weights[i] = rand.nextFloat() * (1.0f - 0.0f) - 1.0f;
 		}
+		weights[5] = rand.nextFloat() * (0.25f - 0.0f) + 0.75f;
 	}
 	
 	long fitness() {
