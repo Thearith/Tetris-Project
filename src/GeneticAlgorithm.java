@@ -57,10 +57,10 @@ public class GeneticAlgorithm {
 			Candidate c3 = population.get(k);
 			Candidate c4 = population.get(l);
 			
-			long f1 = c1.fitness();
-			long f2 = c2.fitness();
-			long f3 = c3.fitness();
-			long f4 = c4.fitness();
+			float f1 = c1.fitness();
+			float f2 = c2.fitness();
+			float f3 = c3.fitness();
+			float f4 = c4.fitness();
 			
 			System.out.println("f1 is " + f1);
 			System.out.println("f2 is " + f2);
