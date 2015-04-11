@@ -8,7 +8,7 @@ public class GeneticAlgorithm {
 	LinkedList<Candidate> population = new LinkedList<Candidate>();
 	final Random rand = new Random();
 	
-	final int populationSize = 10;
+	final int populationSize = 50;
 	final int parentUsePercent = 10;
 	
 	public GeneticAlgorithm() {
