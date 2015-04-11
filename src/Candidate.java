@@ -11,25 +11,30 @@ public class Candidate implements Comparable<Candidate>{
 	
 	void random() {
 		for (int i=0; i < weights.length - 1; i++) {
-			weights[i] = rand.nextFloat() * (1.0f - 0.0f) - 1.0f;
+			weights[i] = rand.nextFloat() * (10.0f - 0.0f) - 10.0f;
 		}
-		weights[5] = rand.nextFloat() * (0.25f - 0.0f) + 0.75f;
+		weights[5] = rand.nextFloat() * (5.0f - 0.0f) + 0.0f;
 	}
 	
-	long fitness() {
+	float fitness() {
 		//long startTime = System.currentTimeMillis();
+		final int numGamePlays = 10;
+		float meanNumRowsCleared = 0.0f;
 		
-		PlayerSkeleton p = new PlayerSkeleton(this.weights);
-		p.run();
-		return p.getRowsCleared();
+		for(int i=0; i<numGamePlays; i++) {
+			PlayerSkeleton p = new PlayerSkeleton(this.weights);
+			p.run();
+			meanNumRowsCleared += p.getRowsCleared();
+		}
+		return meanNumRowsCleared / numGamePlays;
 		
 		//long endTime = System.currentTimeMillis();
 		//return endTime - startTime;
 	}
 	
 	public int compareTo(Candidate o) {
-		long f1 = this.fitness();
-		long f2 = o.fitness();
+		float f1 = this.fitness();
+		float f2 = o.fitness();
 		if (f1 < f2) return 1;
 		else if (f1 > f2) return -1;
 		else return 0;
