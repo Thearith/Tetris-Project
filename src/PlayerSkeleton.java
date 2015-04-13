@@ -7,6 +7,12 @@ import java.util.logging.SimpleFormatter;
 
 public class PlayerSkeleton {
 	
+	// please fill in the file path of logFile in your computer
+	private static final String LOG_FILE_PATH = 
+			"/Users/thearith/Desktop/CS3243 proj/Tetris-Project/src/logfile.txt";
+	
+	private static final int MINIMUM_ROWS_CLEARED = 100000;
+	
 	private State s = null;
 	private TFrame f = null;
 	
@@ -16,7 +22,7 @@ public class PlayerSkeleton {
 		-9.348695305445199,
 		-7.899265427351652,
 		-3.3855972247263626,
-		3.4181268101392694,
+		3.4181268101392694
 	};
 
 	private static final int LANDING_HEIGHTS_INDEX = 0;
@@ -28,22 +34,20 @@ public class PlayerSkeleton {
 	
 	static int index = 0;
 	
-//	public PlayerSkeleton(double[] param) {
-//		weight = param;
-//	}		
+	Logger logger;
+    FileHandler fh;
 	
 	public PlayerSkeleton(double[] param) {
 		s = new State();
-		f = new TFrame(s);
+		
 		weight = param;
 		
 		// set up a log file
-		Logger logger = Logger.getLogger("MyLog");  
-	    FileHandler fh;  
-
+		logger = Logger.getLogger("MyLog");    
+		
 	    try {  
 
-	        fh = new FileHandler("C:/temp/test/MyLogFile.log");  
+	        fh = new FileHandler(LOG_FILE_PATH);  
 	        logger.addHandler(fh);
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter);  
@@ -53,9 +57,7 @@ public class PlayerSkeleton {
 	        e.printStackTrace();  
 	    } catch (IOException e) {  
 	        e.printStackTrace();  
-	    }  
-
-	    logger.info("Hi How r u?"); 
+	    }
 	    
 	}
 	
@@ -72,15 +74,21 @@ public class PlayerSkeleton {
 				break;
 			s.makeMove(move);
 			
-//			try {
-//				Thread.sleep(5);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
 		}
-		if (s.getRowsCleared() > 500) {
-			System.out.println("You have completed "+s.getRowsCleared()+" rows.");
-			System.out.printf("%f, %f, %f, %f, %f, %f\n", weight[0], weight[1], weight[2], weight[3], weight[4], weight[5]);
+		
+		if(s.getRowsCleared() >= MINIMUM_ROWS_CLEARED) {
+			String rowMsg = "You have completed " + String.valueOf(s.getRowsCleared()) + " rows.";
+			logger.info(rowMsg);
+			
+			String weightMsg =
+					"\n\n----WEIGHTS----" +
+					"\n1. landing height weight  		" + String.valueOf(weight[0]) +
+					"\n2. row Transition weight  		" + String.valueOf(weight[1]) +
+					"\n3. col Transition weight  		" + String.valueOf(weight[2]) +
+					"\n4. sum of well weight     		" + String.valueOf(weight[3]) +
+					"\n5. number of holes weight        " + String.valueOf(weight[4]) +
+					"\n6. number of rows removed weight " + String.valueOf(weight[5]) ;
+			logger.info(weightMsg);
 		}
 	}
 	
@@ -124,6 +132,8 @@ public class PlayerSkeleton {
 			double heuristics = getHeuristics(field, top, maxHeight, 
 					pieceHeight, pieceLandingHeight);
 			
+//				double cost = weight[ROWS_COMPLETED_INDEX]* numRowsRemoved 
+//						+ heuristics;
 			double cost = heuristics;
 					
 			if(max < cost) {
@@ -132,7 +142,7 @@ public class PlayerSkeleton {
 			}
 		}
 		
-		System.out.println("move made is " + move);
+		//System.out.println("move made is " + move);
 		return move;
 
 	}
@@ -209,6 +219,7 @@ public class PlayerSkeleton {
 	 * */
 	private int getMaxHeight(int[] top) {
 		int maxHeight = 0;
+		
 		for(int col=0; col<State.COLS; col++)
 			maxHeight = maxHeight < top[col] ? top[col] : maxHeight;
 		
@@ -231,11 +242,11 @@ public class PlayerSkeleton {
 			int pieceHeight, int bottom) {
 		
 		double sum  = 	weight[LANDING_HEIGHTS_INDEX] * landingHeights(bottom, pieceHeight)
+					  + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight)
 				      + weight[ROWS_TRANSITION_INDEX] * rowTransitions(field, maxHeight)
 				      + weight[COLS_TRANSITION_INDEX] * columnTransitions(field, top)
 				      + weight[NUM_HOLES_INDEX] * numberOfHoles(field, maxHeight)
-				      + weight[WELL_SUMS_INDEX] * wellSum(field, top)
-				      + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight);
+				      + weight[WELL_SUMS_INDEX] * wellSum(field, top);		
 		return sum;
 	}
 	
@@ -244,6 +255,7 @@ public class PlayerSkeleton {
 	 * 				which is the sum of the maximum landing height for the tetris piece to land on
 	 * 				and the average of the pieceHeight
 	 * */
+	
 	private float landingHeights(int height, int pieceHeight){
 		return (float) (height + pieceHeight/2.0);
 	}
@@ -392,6 +404,7 @@ public class PlayerSkeleton {
 		
 		return wellSum;
 	}
+
 	
 	/*
 	 * Heuristics 6: get number of rows cleared
@@ -418,6 +431,5 @@ public class PlayerSkeleton {
 		
 		return rowsCleared;
 	}
-	
 	
 }

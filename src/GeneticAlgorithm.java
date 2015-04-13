@@ -1,14 +1,18 @@
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Vector;
 import java.util.LinkedList;
 import java.util.Random;
 
 public class GeneticAlgorithm {
-	static long BEGIN;
-	static final boolean _DEBUG = true;
+	//static long BEGIN;
+	//static final boolean _DEBUG = true;
 	LinkedList<Candidate> population = new LinkedList<Candidate>();
+	Vector< Boolean > hasParticipated = new Vector< Boolean >();
+	Vector< Float > resultScore = new Vector< Float >();
 	final Random rand = new Random();
 	
-	final int populationSize = 50;
+	final int populationSize = 60;
 	final int parentUsePercent = 10;
 	
 	public GeneticAlgorithm() {
@@ -38,19 +42,49 @@ public class GeneticAlgorithm {
 		return fittest;
 	}
 	
+	boolean hasAllParticipated() {
+		for (int i=0; i<population.size(); i++) {
+			if (hasParticipated.get(i) == false) return false;
+		}
+		return true;
+	}
+	
+	void initTraversal() {
+		hasParticipated.clear();
+		hasParticipated.addAll(Collections.nCopies(population.size(), false));
+		resultScore.clear();
+		resultScore.addAll(Collections.nCopies(population.size(), 0.0f));
+	}
+	
 	void produceNextGen() {
 		System.out.println("producing new generation");
 		LinkedList<Candidate> newpopulation = new LinkedList<Candidate>();
+		initTraversal();
 		
+		//while (newpopulation.size() < populationSize * (1.0 - (parentUsePercent / 100.0))) {
 		while (newpopulation.size() < populationSize * (1.0 - (parentUsePercent / 100.0))) {
 			int size = population.size();
-			int i = rand.nextInt(size);
-			int j, k, l;
+			int i, j, k, l;
+			i = rand.nextInt(size);
 			j = k = l = i;
+			if (!hasAllParticipated()) {
+				//do { i = rand.nextInt(size);} while (hasParticipated.get(i));
+				while (hasParticipated.get(i)) i = rand.nextInt(size);
+				j = k = l = i;
+				
+				while (j == i || hasParticipated.get(j)) j = rand.nextInt(size);
+				while (k == i || k == j || hasParticipated.get(k)) k = rand.nextInt(size);
+				while (l == i || l == j || k == l || hasParticipated.get(l)) l = rand.nextInt(size);
+			} else {
+				while (j == i) j = rand.nextInt(size);
+				while (k == i || k == j) k = rand.nextInt(size);
+				while (l == i || l == j || k == l) l = rand.nextInt(size);
+			}
 			
-			while (j == i) j = rand.nextInt(size);
-			while (k == i || k == j) k = rand.nextInt(size);
-			while (l == i || l == j || k == l) l = rand.nextInt(size);
+			hasParticipated.set(i, true);
+			hasParticipated.set(j, true);
+			hasParticipated.set(k, true);
+			hasParticipated.set(l, true);
 			
 			Candidate c1 = population.get(i);
 			Candidate c2 = population.get(j);
@@ -66,6 +100,11 @@ public class GeneticAlgorithm {
 			System.out.println("f2 is " + f2);
 			System.out.println("f3 is " + f3);
 			System.out.println("f4 is " + f4);
+			
+			resultScore.set(i, f1);
+			resultScore.set(j, f2);
+			resultScore.set(k, f3);
+			resultScore.set(l, f4);
 			
 			System.out.println("tournament");
 			
@@ -94,9 +133,12 @@ public class GeneticAlgorithm {
 			newpopulation.add(isChild1Good ? child1 : w1);
 			newpopulation.add(isChild2Good ? child2 : w2);
 		}
+		// Use only top 10% from the parent generation for the next generation
 		int j = (int) (populationSize * parentUsePercent / 100.0);
 		for (int i=0; i < j; i++) {
-			newpopulation.add(population.get(i));
+			int index = resultScore.indexOf(Collections.max(resultScore));
+			newpopulation.add(population.get(index));
+			population.remove(index);
 		}
 		population = newpopulation;
 		//Collections.sort(population);
