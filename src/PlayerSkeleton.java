@@ -6,16 +6,22 @@ public class PlayerSkeleton {
 	//private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
 	private State s = null;
 	private TFrame f = null;
-	private double[] weight = new double[NUM_WEIGHTS];
 	
-	private static final int NUM_WEIGHTS = 6;
-	
-	private static final int DC_INDEX = 0;
-	private static final int COL_HEIGHT_WEIGHT_INDEX = 1;
-	private static final int ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX = 2;
-	private static final int MAXIMUM_COL_HEIGHT_WEIGHT_INDEX = 3;
-	private static final int NUM_HOLES_WEIGHT_INDEX = 4;
-	private static final int COMPLETE_ROWS_INDEX = 5;
+	private double[] weight = {
+		-4.500158825082766,
+		3.4181268101392694,
+		-3.2178882868487753,
+		-9.348695305445199,
+		-7.899265427351652,
+		-3.3855972247263626
+	};
+
+	private static final int LANDING_HEIGHTS_INDEX = 0;
+	private static final int ROWS_COMPLETED_INDEX  = 1;
+	private static final int ROWS_TRANSITION_INDEX = 2;
+	private static final int COLS_TRANSITION_INDEX = 3;
+	private static final int NUM_HOLES_INDEX       = 4;
+	private static final int WELL_SUMS_INDEX       = 5;
 	
 	static int index = 0;
 	
@@ -72,7 +78,6 @@ public class PlayerSkeleton {
 			int[][] sField = s.getField();
 			int[][] field = new int[sField.length][];
 			
-			
 			for(int j=0; j<sField.length; j++) {
 				int length = sField[j].length;
 				field[j] = new int[length];
@@ -81,16 +86,26 @@ public class PlayerSkeleton {
 			
 			int[] top = Arrays.copyOf(s.getTop(), s.getTop().length);
 			
-			int maxHeight = getFieldAndTop(s, legalMoves[i], field, top);
+			if(index == 120)
+				System.out.println("e");
 			
-			if(maxHeight < 0)
+			int bottomHeight = getBottomHeight(s, top, legalMoves[i]);
+			
+			int canCarryOn = updateFieldAndTop(s, legalMoves[i], field, top);
+			
+			if(canCarryOn < 0)
 				continue; //this move will lose the game
 			
-			int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
-			double heuristics = getHeuristics(field, top, numRowsRemoved, maxHeight);
-			//System.out.println("my move nw is " + thisMove + "utility is " + heuristics);
-			double cost = weight[COMPLETE_ROWS_INDEX] * numRowsRemoved + heuristics; 
-			//System.out.println("numRows" + numRowsRemoved + " heuristics " + heuristics);
+			int maxHeight = getMaxHeight(top);
+			int pieceHeight = getPieceHeight(s.getNextPiece(), legalMoves[i][State.ORIENT]);
+			
+			//int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
+			double heuristics = getHeuristics(field, top, maxHeight, 
+					pieceHeight, bottomHeight);
+			
+//				double cost = weight[ROWS_COMPLETED_INDEX]* numRowsRemoved 
+//						+ heuristics;
+			double cost = heuristics;
 					
 			if(max < cost) {
 				max = cost;
@@ -98,14 +113,14 @@ public class PlayerSkeleton {
 			}
 		}
 		
-		//System.out.println("move made is " + move);
+		System.out.println("move made is " + move);
 		return move;
 
 	}
 	
 	// change field and top according to move
 	
-	private int getFieldAndTop(State s, int legalMove[], int[][] field
+	private int updateFieldAndTop(State s, int legalMove[], int[][] field
 			, int[] top) {
 		
 		// Tetris block information (piece, orient, slot)
@@ -128,6 +143,7 @@ public class PlayerSkeleton {
 		if(bottom+pHeight >= State.ROWS) {
 			return -1;
 		}
+
 		
 		// change field and top
 		
@@ -140,19 +156,50 @@ public class PlayerSkeleton {
 			top[i+slot] = bottom+pTop[i];
 		}
 		
-		return bottom+pHeight;
+		return 1;
+	}
+	
+	private int getMaxHeight(int[] top) {
+		int maxHeight = 0;
+		for(int col=0; col<State.COLS; col++)
+			maxHeight = maxHeight < top[col] ? top[col] : maxHeight;
+		
+		return maxHeight;
+	}
+	
+	private int getPieceHeight(int pieceID, int orient) {
+		return State.getpHeight()[pieceID][orient];
+	}
+	
+	private int getBottomHeight(State s, int[] top, int[] legalMove) {
+		int piece = s.getNextPiece();
+		int orient = legalMove[State.ORIENT];
+		int slot = legalMove[State.SLOT];
+		
+		int pWidth = State.getpWidth()[piece][orient];
+		
+		int bottom = top[slot];
+		// find bottom
+		for(int i=1; i<pWidth; i++) {
+			bottom = bottom < top[i+slot] ? top[i+slot] : bottom;
+		}
+		
+		return bottom;
 	}
 
+	
+	/*
+	 * Feature Heuristics functions
+	 * */
+	
 	private int getNumberRowsRemoved (int[][] field, int[] top, int maxHeight) {
 		
 		int rowsCleared = 0;
 		
 		//check for complete rows - starting at the top
-		for(int row = maxHeight-1; 
-				row >= 0; row--) {
+		for(int row = maxHeight-1; row >= 0; row--) {
 			
-			boolean full = true;
-			
+			boolean full = true;			
 			for(int col = 0; col < State.COLS; col++) {
 				if(field[row][col] == 0) {
 					full = false;
@@ -161,15 +208,13 @@ public class PlayerSkeleton {
 			}
 			
 			if(full) {
-				rowsCleared++;
-				
+				rowsCleared++;				
 				for(int col = 0; col < State.COLS; col++) {
-
-					//slide down all bricks
+					
 					for(int i = row; i < top[col]; i++) {
 						field[i][col] = field[i+1][col];
 					}
-					//lower the top
+					
 					top[col]--;
 					while(top[col]>=1 && field[top[col]-1][col]==0)	
 						top[col]--;
@@ -181,42 +226,19 @@ public class PlayerSkeleton {
 		return rowsCleared;
 	}
 	
-	private double getHeuristics(int[][] field, int[] top, int numRowsRemoved, int maxHeight) {
+	private double getHeuristics(int[][] field, int[] top, int maxHeight,
+			int pieceHeight, int bottom) {
 		
-		// compute the sum
-		double sum = weight[DC_INDEX] 
-				+ weight[COL_HEIGHT_WEIGHT_INDEX] * sumOfColumnHeight(top) 
-				+ weight[ABSOLUTE_DIFF_COL_HEIGHTS_WEIGHT_INDEX] * sumOfAbsoluteDiffAdjacentColumnHeights(top)
-				+ weight[MAXIMUM_COL_HEIGHT_WEIGHT_INDEX] * maximumColumnHeight(maxHeight, numRowsRemoved) 
-				+ weight[NUM_HOLES_WEIGHT_INDEX] * numberOfHoles(field, top);
-		
-		return sum;
-	}
-	
-	
-	private int sumOfColumnHeight(int[] top) {
-		int sum = 0;
-		
-		for(int i=0; i<State.COLS; i++)
-			sum += top[i];
+		double sum  = 	weight[LANDING_HEIGHTS_INDEX] * landingHeights(bottom, pieceHeight)
+					  + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight)
+				      + weight[ROWS_TRANSITION_INDEX] * rowTransitions(field, maxHeight)
+				      + weight[COLS_TRANSITION_INDEX] * columnTransitions(field, top)
+				      + weight[NUM_HOLES_INDEX] * numberOfHoles(field, top)
+				      + weight[WELL_SUMS_INDEX] * wellSum(field, top);
 		
 		return sum;
 	}
 	
-	private int sumOfAbsoluteDiffAdjacentColumnHeights (int[] top) {
-		
-		int sumDiff = 0;
-		
-		for(int i=0; i<State.COLS-1; i++)
-			sumDiff += Math.abs(top[i]- top[i+1]);
-		
-		return sumDiff;
-	}
-	
-	private int maximumColumnHeight(int maxHeight, int numRowsRemoved) {
-		
-		return (maxHeight-numRowsRemoved);
-	}
 	
 	private int numberOfHoles(int[][] field, int top[]) {
 		
@@ -237,5 +259,105 @@ public class PlayerSkeleton {
 		}
 		
 		return numHoles;
+	}	
+	
+	private float landingHeights(int height, int pieceHeight){
+		return (float) (height + pieceHeight/2.0);
+	}
+	
+	private int rowTransitions(int field[][], int maxHeight) {
+		
+		int numRowTransitions = 0;
+
+		boolean isPrevCellFilled = true;
+		for(int row=0; row<maxHeight; row++) {
+			for(int col=0; col<State.COLS-1; col++) {
+				boolean isCurrentCellFilled = false;
+				if(field[row][col] != 0) {
+                    isCurrentCellFilled = true;
+                }
+				if(isPrevCellFilled != isCurrentCellFilled) {
+                    numRowTransitions++;
+                }
+                isPrevCellFilled = isCurrentCellFilled;
+ 			}
+ 			if(!isPrevCellFilled) {
+                numRowTransitions++;
+            }
+            isPrevCellFilled = true;
+		}
+		
+		return numRowTransitions;
+	}
+	
+	private int columnTransitions(int field[][], int[] top) {
+		
+		int numColTransitions = 0;
+		boolean isPrevCellFilled = true;	
+
+		for(int col=0; col<State.COLS; col++) {	
+			for(int row=0; row<top[col]; row++) {
+				boolean isCurrentCellFilled = false;
+                if(field[row][col] != 0) {
+                    isCurrentCellFilled = true;
+                }
+                if(isPrevCellFilled != isCurrentCellFilled) {
+                    numColTransitions++;
+                }
+                isPrevCellFilled = isCurrentCellFilled;
+				
+			}
+				
+		}
+		
+		return numColTransitions;
+	}
+	
+	private int wellSum(int field[][], int top[]) {
+		
+		int wellSum = 0;
+		
+		for(int col=0; col<State.COLS; col++) {
+			int rowStartIndex = 0;
+            if(col == 0) {
+                rowStartIndex = top[1];
+            } else if(col == State.COLS - 1) {
+                rowStartIndex = top[State.COLS - 2];
+            } else {
+                rowStartIndex = top[col - 1];
+                if(top[col + 1] < rowStartIndex) {
+                    rowStartIndex = top[col + 1];
+                }
+            }
+
+            rowStartIndex = rowStartIndex - 1;
+            for(int row = rowStartIndex; row >= 0; row--) {                                
+                boolean isSquareEmpty = true;
+                if(field[row][col] != 0) {
+                    isSquareEmpty = false;
+                }
+                boolean isSquareOnLeftFilled = false;
+                boolean isSquareOnRightFilled = false;
+                if(col == 0 || field[row][col - 1] != 0) {
+                    isSquareOnLeftFilled = true;
+                }
+                if(col == State.COLS-1 || field[row][col + 1] != 0) {
+                    isSquareOnRightFilled = true;
+                }
+                if(isSquareEmpty && isSquareOnLeftFilled && isSquareOnRightFilled) {                    
+                    wellSum++;
+                    for(int wellIndex = row - 1; wellIndex >= 0; wellIndex--) {
+                        if(field[wellIndex][col] == 0) {
+                            wellSum++;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+
+		}
+		
+		return wellSum;
 	}
 }
