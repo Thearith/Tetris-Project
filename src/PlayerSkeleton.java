@@ -1,9 +1,12 @@
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 public class PlayerSkeleton {
 	
-	//private double[] weight = {0.0, -0.66569, -0.24077, -1/21.0, -0.46544};
 	private State s = null;
 	private TFrame f = null;
 	
@@ -33,6 +36,27 @@ public class PlayerSkeleton {
 		s = new State();
 		f = new TFrame(s);
 		weight = param;
+		
+		// set up a log file
+		Logger logger = Logger.getLogger("MyLog");  
+	    FileHandler fh;  
+
+	    try {  
+
+	        fh = new FileHandler("C:/temp/test/MyLogFile.log");  
+	        logger.addHandler(fh);
+	        SimpleFormatter formatter = new SimpleFormatter();  
+	        fh.setFormatter(formatter);  
+
+
+	    } catch (SecurityException e) {  
+	        e.printStackTrace();  
+	    } catch (IOException e) {  
+	        e.printStackTrace();  
+	    }  
+
+	    logger.info("Hi How r u?"); 
+	    
 	}
 	
 	public void run() {
@@ -48,11 +72,11 @@ public class PlayerSkeleton {
 				break;
 			s.makeMove(move);
 			
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(5);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		}
 		if (s.getRowsCleared() > 500) {
 			System.out.println("You have completed "+s.getRowsCleared()+" rows.");
@@ -64,7 +88,7 @@ public class PlayerSkeleton {
 		return s.getRowsCleared();
 	}
 	
-	//implement this function to have a working system
+	
 	public int pickMove(State s, int[][] legalMoves) {
 		
 		int move = -1;
@@ -72,7 +96,7 @@ public class PlayerSkeleton {
 		
 		for(int i=0; i<legalMoves.length; i++) {
 			
-			//change top and field according to the move
+			//copy top and field from the previous state
 			int[][] sField = s.getField();
 			int[][] field = new int[sField.length][];
 			
@@ -84,22 +108,21 @@ public class PlayerSkeleton {
 			
 			int[] top = Arrays.copyOf(s.getTop(), s.getTop().length);
 			
-			if(index == 120)
-				System.out.println("e");
 			
-			int bottomHeight = getBottomHeight(s, top, legalMoves[i]);
+			int pieceLandingHeight = getLandingHeight(s, top, legalMoves[i]);
 			
+			// update the field
 			int canCarryOn = updateFieldAndTop(s, legalMoves[i], field, top);
 			
 			if(canCarryOn < 0)
 				continue; //this move will lose the game
 			
-			int maxHeight = getMaxHeight(top);
-			int pieceHeight = getPieceHeight(s.getNextPiece(), legalMoves[i][State.ORIENT]);
+			int maxHeight = getMaxHeight(top); // get max height
+			int pieceHeight = getPieceHeight(s.getNextPiece(), legalMoves[i][State.ORIENT]); 
 			
 			//int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
 			double heuristics = getHeuristics(field, top, maxHeight, 
-					pieceHeight, bottomHeight);
+					pieceHeight, pieceLandingHeight);
 			
 			double cost = heuristics;
 					
@@ -114,8 +137,10 @@ public class PlayerSkeleton {
 
 	}
 	
-	// change field and top according to move
-	
+	/*
+	 * Update field and top according to the move
+	 * the updated field and top will only be used for this move only
+	 * */ 
 	private int updateFieldAndTop(State s, int legalMove[], int[][] field
 			, int[] top) {
 		
@@ -130,44 +155,39 @@ public class PlayerSkeleton {
 		int pWidth = State.getpWidth()[piece][orient];
 		int pHeight = State.getpHeight()[piece][orient];	
 		
-		int bottom = top[slot] - pBottom[0];
-		// find bottom
+		int landingHeight = top[slot] - pBottom[0];
+		// find 
 		for(int i=1; i<pWidth; i++) {
-			bottom = bottom < (top[i+slot]-pBottom[i]) ? (top[i+slot]-pBottom[i]) : bottom;
+			landingHeight = landingHeight < (top[i+slot]-pBottom[i]) ? 
+					(top[i+slot]-pBottom[i]) : landingHeight;
 		}
 		
-		if(bottom+pHeight >= State.ROWS) {
-			return -1;
+		if(landingHeight+pHeight >= State.ROWS) {
+			return -1; // it exceeds the height so the move will lose the game
 		}
-
 		
-		// change field and top
-		
+		// update field and top
 		for(int i=0; i<pWidth; i++) {
-			for(int height=bottom+pBottom[i]; 
-					height<bottom+pTop[i]; height++) {
+			for(int height = landingHeight + pBottom[i]; 
+					height < landingHeight + pTop[i]; height++) {
 				field[height][i+slot] = 1;
 			}
 			
-			top[i+slot] = bottom+pTop[i];
+			top[i+slot] = landingHeight + pTop[i];
 		}
 		
-		return 1;
+		return 1; //the game will not lose with this move
 	}
 	
-	private int getMaxHeight(int[] top) {
-		int maxHeight = 0;
-		for(int col=0; col<State.COLS; col++)
-			maxHeight = maxHeight < top[col] ? top[col] : maxHeight;
-		
-		return maxHeight;
-	}
+	/*
+	 * Utility function
+	 * */
 	
-	private int getPieceHeight(int pieceID, int orient) {
-		return State.getpHeight()[pieceID][orient];
-	}
-	
-	private int getBottomHeight(State s, int[] top, int[] legalMove) {
+	/*
+	 * get the maximum landing height for a tetris to land
+	 * This function is called before the field and top are updated according to each move 
+	 * */
+	private int getLandingHeight(State s, int[] top, int[] legalMove) {
 		int piece = s.getNextPiece();
 		int orient = legalMove[State.ORIENT];
 		int slot = legalMove[State.SLOT];
@@ -182,45 +202,30 @@ public class PlayerSkeleton {
 		
 		return bottom;
 	}
+	
+	/*
+	 * Get max height of the field
+	 * so that we do not have to loop through all field[][]
+	 * */
+	private int getMaxHeight(int[] top) {
+		int maxHeight = 0;
+		for(int col=0; col<State.COLS; col++)
+			maxHeight = maxHeight < top[col] ? top[col] : maxHeight;
+		
+		return maxHeight;
+	}
+	
+	/* 
+	 * Get piece height
+	 * */
+	private int getPieceHeight(int pieceID, int orient) {
+		return State.getpHeight()[pieceID][orient];
+	}
 
 	
 	/*
 	 * Feature Heuristics functions
 	 * */
-	
-	private int getNumberRowsRemoved (int[][] field, int[] top, int maxHeight) {
-		
-		int rowsCleared = 0;
-		
-		//check for complete rows - starting at the top
-		for(int row = maxHeight-1; row >= 0; row--) {
-			
-			boolean full = true;			
-			for(int col = 0; col < State.COLS; col++) {
-				if(field[row][col] == 0) {
-					full = false;
-					break;
-				}
-			}
-			
-			if(full) {
-				rowsCleared++;				
-//				for(int col = 0; col < State.COLS; col++) {
-//					
-//					for(int i = row; i < top[col]; i++) {
-//						field[i][col] = field[i+1][col];
-//					}
-//					
-//					top[col]--;
-//					while(top[col]>=1 && field[top[col]-1][col]==0)	
-//						top[col]--;
-//				}
-				
-			}
-		}
-		
-		return rowsCleared;
-	}
 	
 	private double getHeuristics(int[][] field, int[] top, int maxHeight,
 			int pieceHeight, int bottom) {
@@ -234,9 +239,25 @@ public class PlayerSkeleton {
 		return sum;
 	}
 	
+	/*
+	 * Heuristics 1: get the landing height 
+	 * 				which is the sum of the maximum landing height for the tetris piece to land on
+	 * 				and the average of the pieceHeight
+	 * */
 	private float landingHeights(int height, int pieceHeight){
 		return (float) (height + pieceHeight/2.0);
 	}
+	
+	
+	
+	
+	/*
+	 * Heuristics 2: get number of rowTransitions
+	 *               loop through every row
+	 *               and in each row, count the number of transitions between the filled cell and empty cell
+	 *                                and vice versa
+	 * */
+	
 	
 	private int rowTransitions(int field[][], int maxHeight) {
 		
@@ -263,6 +284,13 @@ public class PlayerSkeleton {
 		return numRowTransitions;
 	}
 	
+	/*
+	 * Heuristics 3: get number of columnTransition
+	 *               loop through every column
+	 *               and in each column, count the number of transitions between the filled cell and empty cell
+	 *                                and vice versa
+	 * */
+	
 	private int columnTransitions(int field[][], int[] top) {
 		
 		int numColTransitions = 0;
@@ -286,6 +314,11 @@ public class PlayerSkeleton {
 		return numColTransitions;
 	}
 	
+	/*
+	 * Heuristics 4: get number of holes in the field
+	 * 
+	 * */
+	
 	private int numberOfHoles(int[][] field, int maxHeight) {
 		
 		int numHoles = 0;
@@ -304,6 +337,11 @@ public class PlayerSkeleton {
 		
 		return numHoles;
 	}	
+	
+	/*
+	 * Heuristics 5: get the sum of wells
+	 *               A well is an empty cell with both left neighbor cell and right neighbor cell being filled
+	 * */
 	
 	private int wellSum(int field[][], int top[]) {
 		
@@ -325,9 +363,11 @@ public class PlayerSkeleton {
             rowStartIndex = rowStartIndex - 1;
             for(int row = rowStartIndex; row >= 0; row--) {                                
                 boolean isSquareEmpty = true;
+                
                 if(field[row][col] != 0) {
                     isSquareEmpty = false;
                 }
+                
                 boolean isSquareOnLeftFilled = false;
                 boolean isSquareOnRightFilled = false;
                 if(col == 0 || field[row][col - 1] != 0) {
@@ -351,6 +391,32 @@ public class PlayerSkeleton {
 		}
 		
 		return wellSum;
+	}
+	
+	/*
+	 * Heuristics 6: get number of rows cleared
+	 * */
+	private int getNumberRowsRemoved (int[][] field, int[] top, int maxHeight) {
+		
+		int rowsCleared = 0;
+		
+		//check for complete rows - starting at the top
+		for(int row = maxHeight-1; row >= 0; row--) {
+			
+			boolean full = true;			
+			for(int col = 0; col < State.COLS; col++) {
+				if(field[row][col] == 0) {
+					full = false;
+					break;
+				}
+			}
+			
+			if(full) {
+				rowsCleared++;
+			}
+		}
+		
+		return rowsCleared;
 	}
 	
 	
