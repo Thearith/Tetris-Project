@@ -8,7 +8,7 @@ public class GeneticAlgorithm {
 	LinkedList<Candidate> population = new LinkedList<Candidate>();
 	final Random rand = new Random();
 	
-	final int populationSize = 10;
+	final int populationSize = 50;
 	final int parentUsePercent = 10;
 	
 	public GeneticAlgorithm() {
@@ -57,11 +57,15 @@ public class GeneticAlgorithm {
 			Candidate c3 = population.get(k);
 			Candidate c4 = population.get(l);
 			
-			long f1 = c1.fitness();
-			System.out.println(f1);
-			long f2 = c2.fitness();
-			long f3 = c3.fitness();
-			long f4 = c4.fitness();
+			float f1 = c1.fitness();
+			float f2 = c2.fitness();
+			float f3 = c3.fitness();
+			float f4 = c4.fitness();
+			
+			System.out.println("f1 is " + f1);
+			System.out.println("f2 is " + f2);
+			System.out.println("f3 is " + f3);
+			System.out.println("f4 is " + f4);
 			
 			System.out.println("tournament");
 			
@@ -83,6 +87,9 @@ public class GeneticAlgorithm {
 			
 			boolean isChild1Good = child1.fitness() >= w1.fitness();
 			boolean isChild2Good = child2.fitness() >= w2.fitness();
+			
+			if (isChild1Good) System.out.println("add child1"); else System.out.println("add w1");
+			if (isChild2Good) System.out.println("add child2"); else System.out.println("add w2");
 			
 			newpopulation.add(isChild1Good ? child1 : w1);
 			newpopulation.add(isChild2Good ? child2 : w2);

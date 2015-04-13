@@ -57,8 +57,10 @@ public class PlayerSkeleton {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
-		System.out.printf("%f, %f, %f, %f, %f\n", weight[0], weight[1], weight[2], weight[3], weight[4]);
+		if (s.getRowsCleared() > 500) {
+			System.out.println("You have completed "+s.getRowsCleared()+" rows.");
+			System.out.printf("%f, %f, %f, %f, %f, %f\n", weight[0], weight[1], weight[2], weight[3], weight[4], weight[5]);
+		}
 		f.closeFrame();
 	}
 	
@@ -233,23 +235,20 @@ public class PlayerSkeleton {
 					  + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight)
 				      + weight[ROWS_TRANSITION_INDEX] * rowTransitions(field, maxHeight)
 				      + weight[COLS_TRANSITION_INDEX] * columnTransitions(field, top)
-				      + weight[NUM_HOLES_INDEX] * numberOfHoles(field, top)
-				      + weight[WELL_SUMS_INDEX] * wellSum(field, top);
-		
+				      + weight[NUM_HOLES_INDEX] * numberOfHoles(field, maxHeight)
+				      + weight[WELL_SUMS_INDEX] * wellSum(field, top);		
 		return sum;
 	}
 	
 	
-	private int numberOfHoles(int[][] field, int top[]) {
+	private int numberOfHoles(int[][] field, int maxHeight) {
 		
 		int numHoles = 0;
 		boolean hasHole = false;
 		
 		for(int col=0; col<State.COLS; col++) {
 			hasHole = false;
-			
-			for(int row=top[col]-2; row>=0; row--) {
-				
+			for(int row=maxHeight-2; row>=0; row--) {
 				if(field[row][col] == 0 && (field[row+1][col] != 0 || hasHole)) {
 					numHoles++; // there is a hole
 					hasHole = true;
