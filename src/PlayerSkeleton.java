@@ -13,7 +13,7 @@ public class PlayerSkeleton {
 		-9.348695305445199,
 		-7.899265427351652,
 		-3.3855972247263626,
-		3.4181268101392694,
+		3.4181268101392694
 	};
 
 	private static final int LANDING_HEIGHTS_INDEX = 0;
@@ -31,7 +31,7 @@ public class PlayerSkeleton {
 	
 	public PlayerSkeleton(double[] param) {
 		s = new State();
-		f = new TFrame(s);
+		//f = new TFrame(s);
 		weight = param;
 	}
 	
@@ -48,20 +48,20 @@ public class PlayerSkeleton {
 				break;
 			s.makeMove(move);
 			
-			s.draw();
-			s.drawNext(0,0);
+			//s.draw();
+			//s.drawNext(0,0);
 			
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(5);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		}
 		if (s.getRowsCleared() > 500) {
 			System.out.println("You have completed "+s.getRowsCleared()+" rows.");
 			System.out.printf("%f, %f, %f, %f, %f, %f\n", weight[0], weight[1], weight[2], weight[3], weight[4], weight[5]);
 		}
-		f.closeFrame();
+		//f.closeFrame();
 	}
 	
 	public int getRowsCleared(){
@@ -105,6 +105,8 @@ public class PlayerSkeleton {
 			double heuristics = getHeuristics(field, top, maxHeight, 
 					pieceHeight, bottomHeight);
 			
+//				double cost = weight[ROWS_COMPLETED_INDEX]* numRowsRemoved 
+//						+ heuristics;
 			double cost = heuristics;
 					
 			if(max < cost) {
@@ -113,7 +115,7 @@ public class PlayerSkeleton {
 			}
 		}
 		
-		System.out.println("move made is " + move);
+		//System.out.println("move made is " + move);
 		return move;
 
 	}
@@ -209,16 +211,16 @@ public class PlayerSkeleton {
 			
 			if(full) {
 				rowsCleared++;				
-//				for(int col = 0; col < State.COLS; col++) {
-//					
-//					for(int i = row; i < top[col]; i++) {
-//						field[i][col] = field[i+1][col];
-//					}
-//					
-//					top[col]--;
-//					while(top[col]>=1 && field[top[col]-1][col]==0)	
-//						top[col]--;
-//				}
+				for(int col = 0; col < State.COLS; col++) {
+					
+					for(int i = row; i < top[col]; i++) {
+						field[i][col] = field[i+1][col];
+					}
+					
+					top[col]--;
+					while(top[col]>=1 && field[top[col]-1][col]==0)	
+						top[col]--;
+				}
 				
 			}
 		}
@@ -230,13 +232,33 @@ public class PlayerSkeleton {
 			int pieceHeight, int bottom) {
 		
 		double sum  = 	weight[LANDING_HEIGHTS_INDEX] * landingHeights(bottom, pieceHeight)
+					  + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight)
 				      + weight[ROWS_TRANSITION_INDEX] * rowTransitions(field, maxHeight)
 				      + weight[COLS_TRANSITION_INDEX] * columnTransitions(field, top)
 				      + weight[NUM_HOLES_INDEX] * numberOfHoles(field, maxHeight)
-				      + weight[WELL_SUMS_INDEX] * wellSum(field, top)
-				      + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight);
+				      + weight[WELL_SUMS_INDEX] * wellSum(field, top);		
 		return sum;
 	}
+	
+	
+	private int numberOfHoles(int[][] field, int maxHeight) {
+		
+		int numHoles = 0;
+		boolean hasHole = false;
+		
+		for(int col=0; col<State.COLS; col++) {
+			hasHole = false;
+			for(int row=maxHeight-2; row>=0; row--) {
+				if(field[row][col] == 0 && (field[row+1][col] != 0 || hasHole)) {
+					numHoles++; // there is a hole
+					hasHole = true;
+				} else if(field[row][col] != 0)
+					hasHole = false;
+			}
+		}
+		
+		return numHoles;
+	}	
 	
 	private float landingHeights(int height, int pieceHeight){
 		return (float) (height + pieceHeight/2.0);
@@ -290,25 +312,6 @@ public class PlayerSkeleton {
 		return numColTransitions;
 	}
 	
-	private int numberOfHoles(int[][] field, int maxHeight) {
-		
-		int numHoles = 0;
-		boolean hasHole = false;
-		
-		for(int col=0; col<State.COLS; col++) {
-			hasHole = false;
-			for(int row=maxHeight-2; row>=0; row--) {
-				if(field[row][col] == 0 && (field[row+1][col] != 0 || hasHole)) {
-					numHoles++; // there is a hole
-					hasHole = true;
-				} else if(field[row][col] != 0)
-					hasHole = false;
-			}
-		}
-		
-		return numHoles;
-	}	
-	
 	private int wellSum(int field[][], int top[]) {
 		
 		int wellSum = 0;
@@ -356,6 +359,4 @@ public class PlayerSkeleton {
 		
 		return wellSum;
 	}
-	
-	
 }
