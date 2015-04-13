@@ -77,17 +77,17 @@ public class PlayerSkeleton {
 		}
 		
 		if(s.getRowsCleared() >= MINIMUM_ROWS_CLEARED) {
-			String rowMsg = "You have completed " + String.valueOf(s.getRowsCleared()) + " rows.";
+			String rowMsg = "\n\nYou have completed " + String.valueOf(s.getRowsCleared()) + " rows.\n\n";
 			logger.info(rowMsg);
 			
 			String weightMsg =
-					"\n\n----WEIGHTS----" +
+					"\n\n----WEIGHTS----\n" +
 					"\n1. landing height weight  		" + String.valueOf(weight[0]) +
 					"\n2. row Transition weight  		" + String.valueOf(weight[1]) +
 					"\n3. col Transition weight  		" + String.valueOf(weight[2]) +
 					"\n4. sum of well weight     		" + String.valueOf(weight[3]) +
 					"\n5. number of holes weight        " + String.valueOf(weight[4]) +
-					"\n6. number of rows removed weight " + String.valueOf(weight[5]) ;
+					"\n6. number of rows removed weight " + String.valueOf(weight[5]) + "\n\n\n";
 			logger.info(weightMsg);
 		}
 	}
