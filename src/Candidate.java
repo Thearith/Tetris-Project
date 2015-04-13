@@ -24,7 +24,11 @@ public class Candidate implements Comparable<Candidate>{
 		for(int i=0; i<numGamePlays; i++) {
 			PlayerSkeleton p = new PlayerSkeleton(this.weights);
 			p.run();
-			meanNumRowsCleared += p.getRowsCleared();
+			if (p.getRowsCleared() <= 500) {
+				return 0.0f;
+			} else {
+				meanNumRowsCleared += p.getRowsCleared();
+			}
 		}
 		return meanNumRowsCleared / numGamePlays;
 		

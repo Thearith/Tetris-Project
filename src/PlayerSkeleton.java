@@ -9,19 +9,19 @@ public class PlayerSkeleton {
 	
 	private double[] weight = {
 		-4.500158825082766,
-		3.4181268101392694,
 		-3.2178882868487753,
 		-9.348695305445199,
 		-7.899265427351652,
-		-3.3855972247263626
+		-3.3855972247263626,
+		3.4181268101392694,
 	};
 
 	private static final int LANDING_HEIGHTS_INDEX = 0;
-	private static final int ROWS_COMPLETED_INDEX  = 1;
-	private static final int ROWS_TRANSITION_INDEX = 2;
-	private static final int COLS_TRANSITION_INDEX = 3;
-	private static final int NUM_HOLES_INDEX       = 4;
-	private static final int WELL_SUMS_INDEX       = 5;
+	private static final int ROWS_TRANSITION_INDEX = 1;
+	private static final int COLS_TRANSITION_INDEX = 2;
+	private static final int NUM_HOLES_INDEX       = 3;
+	private static final int WELL_SUMS_INDEX       = 4;
+	private static final int ROWS_COMPLETED_INDEX  = 5;
 	
 	static int index = 0;
 	
@@ -101,12 +101,10 @@ public class PlayerSkeleton {
 			int maxHeight = getMaxHeight(top);
 			int pieceHeight = getPieceHeight(s.getNextPiece(), legalMoves[i][State.ORIENT]);
 			
-			//int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
+			int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
 			double heuristics = getHeuristics(field, top, maxHeight, 
-					pieceHeight, bottomHeight);
+					pieceHeight, bottomHeight, numRowsRemoved);
 			
-//				double cost = weight[ROWS_COMPLETED_INDEX]* numRowsRemoved 
-//						+ heuristics;
 			double cost = heuristics;
 					
 			if(max < cost) {
@@ -229,36 +227,16 @@ public class PlayerSkeleton {
 	}
 	
 	private double getHeuristics(int[][] field, int[] top, int maxHeight,
-			int pieceHeight, int bottom) {
+			int pieceHeight, int bottom, int numRowsRemoved) {
 		
 		double sum  = 	weight[LANDING_HEIGHTS_INDEX] * landingHeights(bottom, pieceHeight)
-					  + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight)
 				      + weight[ROWS_TRANSITION_INDEX] * rowTransitions(field, maxHeight)
 				      + weight[COLS_TRANSITION_INDEX] * columnTransitions(field, top)
 				      + weight[NUM_HOLES_INDEX] * numberOfHoles(field, maxHeight)
-				      + weight[WELL_SUMS_INDEX] * wellSum(field, top);		
+				      + weight[WELL_SUMS_INDEX] * wellSum(field, top)
+				      + weight[ROWS_COMPLETED_INDEX] * numRowsRemoved;
 		return sum;
 	}
-	
-	
-	private int numberOfHoles(int[][] field, int maxHeight) {
-		
-		int numHoles = 0;
-		boolean hasHole = false;
-		
-		for(int col=0; col<State.COLS; col++) {
-			hasHole = false;
-			for(int row=maxHeight-2; row>=0; row--) {
-				if(field[row][col] == 0 && (field[row+1][col] != 0 || hasHole)) {
-					numHoles++; // there is a hole
-					hasHole = true;
-				} else if(field[row][col] != 0)
-					hasHole = false;
-			}
-		}
-		
-		return numHoles;
-	}	
 	
 	private float landingHeights(int height, int pieceHeight){
 		return (float) (height + pieceHeight/2.0);
@@ -312,6 +290,25 @@ public class PlayerSkeleton {
 		return numColTransitions;
 	}
 	
+	private int numberOfHoles(int[][] field, int maxHeight) {
+		
+		int numHoles = 0;
+		boolean hasHole = false;
+		
+		for(int col=0; col<State.COLS; col++) {
+			hasHole = false;
+			for(int row=maxHeight-2; row>=0; row--) {
+				if(field[row][col] == 0 && (field[row+1][col] != 0 || hasHole)) {
+					numHoles++; // there is a hole
+					hasHole = true;
+				} else if(field[row][col] != 0)
+					hasHole = false;
+			}
+		}
+		
+		return numHoles;
+	}	
+	
 	private int wellSum(int field[][], int top[]) {
 		
 		int wellSum = 0;
@@ -359,4 +356,6 @@ public class PlayerSkeleton {
 		
 		return wellSum;
 	}
+	
+	
 }
