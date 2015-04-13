@@ -48,9 +48,6 @@ public class PlayerSkeleton {
 				break;
 			s.makeMove(move);
 			
-			s.draw();
-			s.drawNext(0,0);
-			
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
@@ -61,7 +58,6 @@ public class PlayerSkeleton {
 			System.out.println("You have completed "+s.getRowsCleared()+" rows.");
 			System.out.printf("%f, %f, %f, %f, %f, %f\n", weight[0], weight[1], weight[2], weight[3], weight[4], weight[5]);
 		}
-		f.closeFrame();
 	}
 	
 	public int getRowsCleared(){
