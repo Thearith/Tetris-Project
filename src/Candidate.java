@@ -13,7 +13,7 @@ public class Candidate implements Comparable<Candidate>{
 		for (int i=0; i < weights.length - 1; i++) {
 			weights[i] = rand.nextFloat() * (10.0f - 0.0f) - 10.0f;
 		}
-		weights[5] = rand.nextFloat() * (5.0f - 0.0f) + 0.0f;
+		weights[SIZE-1] = rand.nextFloat() * (5.0f - 0.0f) + 0.0f;
 	}
 	
 	float fitness() {
@@ -24,11 +24,12 @@ public class Candidate implements Comparable<Candidate>{
 		for(int i=0; i<numGamePlays; i++) {
 			PlayerSkeleton p = new PlayerSkeleton(this.weights);
 			p.run();
-			if (p.getRowsCleared() <= 500) {
-				return 0.0f;
-			} else {
-				meanNumRowsCleared += p.getRowsCleared();
-			}
+			meanNumRowsCleared += p.getRowsCleared();
+//			if (p.getRowsCleared() < 100000) {
+//				return 0.0f;
+//			} else {
+//				meanNumRowsCleared += p.getRowsCleared();
+//			}
 		}
 		return meanNumRowsCleared / numGamePlays;
 		
