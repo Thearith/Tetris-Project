@@ -1,60 +1,400 @@
-Apr 14, 2015 1:56:12 AM PlayerSkeleton run
+Apr 14, 2015 10:15:22 PM PlayerSkeleton run
 INFO: 
 
-You have completed 162540 rows.
+You have completed 159708 rows.
 
 
-Apr 14, 2015 1:56:12 AM PlayerSkeleton run
-INFO: 
-
-----WEIGHTS----
-
-1. landing height weight  		-3.023059844970703
-2. row Transition weight  		-1.8477210998535156
-3. col Transition weight  		-9.08521556854248
-4. sum of well weight     		-9.483404159545898
-5. number of holes weight        -3.8765869140625
-6. number of rows removed weight 0.24641960859298706
-
-
-
-Apr 14, 2015 1:56:21 AM PlayerSkeleton run
-INFO: 
-
-You have completed 116722 rows.
-
-
-Apr 14, 2015 1:56:21 AM PlayerSkeleton run
+Apr 14, 2015 10:15:22 PM PlayerSkeleton run
 INFO: 
 
 ----WEIGHTS----
 
-1. landing height weight  		-3.023059844970703
-2. row Transition weight  		-1.8477210998535156
-3. col Transition weight  		-9.08521556854248
-4. sum of well weight     		-9.483404159545898
-5. number of holes weight        -3.8765869140625
-6. number of rows removed weight 0.24641960859298706
+1. landing height weight  		-8.596994400024414
+2. row Transition weight  		-1.2046422958374023
+3. col Transition weight  		-9.849374771118164
+4. sum of well weight     		-7.055353164672852
+5. number of holes weight        -4.098472595214844
+6. number of rows removed weight 1.5146905183792114
 
 
 
-Apr 14, 2015 1:56:36 AM PlayerSkeleton run
+Apr 14, 2015 10:15:36 PM PlayerSkeleton run
 INFO: 
 
-You have completed 182745 rows.
+You have completed 131905 rows.
 
 
-Apr 14, 2015 1:56:36 AM PlayerSkeleton run
+Apr 14, 2015 10:15:36 PM PlayerSkeleton run
 INFO: 
 
 ----WEIGHTS----
 
-1. landing height weight  		-3.023059844970703
-2. row Transition weight  		-1.8477210998535156
-3. col Transition weight  		-9.08521556854248
-4. sum of well weight     		-9.483404159545898
-5. number of holes weight        -3.8765869140625
-6. number of rows removed weight 0.24641960859298706
+1. landing height weight  		-8.596994400024414
+2. row Transition weight  		-1.2046422958374023
+3. col Transition weight  		-9.849374771118164
+4. sum of well weight     		-7.055353164672852
+5. number of holes weight        -4.098472595214844
+6. number of rows removed weight 1.5146905183792114
+
+
+
+Apr 14, 2015 10:15:45 PM PlayerSkeleton run
+INFO: 
+
+You have completed 131002 rows.
+
+
+Apr 14, 2015 10:15:45 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-8.596994400024414
+2. row Transition weight  		-1.2046422958374023
+3. col Transition weight  		-9.849374771118164
+4. sum of well weight     		-7.055353164672852
+5. number of holes weight        -4.098472595214844
+6. number of rows removed weight 1.5146905183792114
+
+
+
+Apr 14, 2015 10:16:31 PM PlayerSkeleton run
+INFO: 
+
+You have completed 168321 rows.
+
+
+Apr 14, 2015 10:16:31 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-7.979223728179932
+2. row Transition weight  		-1.2046422958374023
+3. col Transition weight  		-9.849374771118164
+4. sum of well weight     		-5.2383575439453125
+5. number of holes weight        -4.098472595214844
+6. number of rows removed weight 1.8797173500061035
+
+
+
+Apr 14, 2015 10:17:10 PM PlayerSkeleton run
+INFO: 
+
+You have completed 146045 rows.
+
+
+Apr 14, 2015 10:17:10 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-8.596994400024414
+2. row Transition weight  		-1.2046422958374023
+3. col Transition weight  		-9.849374771118164
+4. sum of well weight     		-7.055353164672852
+5. number of holes weight        -4.098472595214844
+6. number of rows removed weight 1.5146905183792114
+
+
+
+Apr 14, 2015 10:17:36 PM PlayerSkeleton run
+INFO: 
+
+You have completed 150202 rows.
+
+
+Apr 14, 2015 10:17:36 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-2.7686266899108887
+2. row Transition weight  		-0.4442615509033203
+3. col Transition weight  		-7.902164936065674
+4. sum of well weight     		-2.3146657943725586
+5. number of holes weight        -2.0076918601989746
+6. number of rows removed weight 0.2843165397644043
+
+
+
+Apr 14, 2015 10:20:50 PM PlayerSkeleton run
+INFO: 
+
+You have completed 175109 rows.
+
+
+Apr 14, 2015 10:20:50 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.0872163772583008
+2. row Transition weight  		-3.691225051879883
+3. col Transition weight  		-9.09096908569336
+4. sum of well weight     		-9.341178894042969
+5. number of holes weight        -5.3487019538879395
+6. number of rows removed weight 3.952460289001465
+
+
+
+Apr 14, 2015 10:21:49 PM PlayerSkeleton run
+INFO: 
+
+You have completed 132371 rows.
+
+
+Apr 14, 2015 10:21:49 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-0.5446577072143555
+2. row Transition weight  		-3.691225051879883
+3. col Transition weight  		-8.730112075805664
+4. sum of well weight     		-9.341178894042969
+5. number of holes weight        -5.3487019538879395
+6. number of rows removed weight 3.952460289001465
+
+
+
+Apr 14, 2015 10:22:09 PM PlayerSkeleton run
+INFO: 
+
+You have completed 166648 rows.
+
+
+Apr 14, 2015 10:22:09 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.0872163772583008
+2. row Transition weight  		-3.691225051879883
+3. col Transition weight  		-9.09096908569336
+4. sum of well weight     		-9.341178894042969
+5. number of holes weight        -5.3487019538879395
+6. number of rows removed weight 3.952460289001465
+
+
+
+Apr 14, 2015 10:22:33 PM PlayerSkeleton run
+INFO: 
+
+You have completed 141400 rows.
+
+
+Apr 14, 2015 10:22:33 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.0872163772583008
+2. row Transition weight  		-3.691225051879883
+3. col Transition weight  		-9.09096908569336
+4. sum of well weight     		-9.341178894042969
+5. number of holes weight        -5.3487019538879395
+6. number of rows removed weight 3.952460289001465
+
+
+
+Apr 14, 2015 10:23:07 PM PlayerSkeleton run
+INFO: 
+
+You have completed 102173 rows.
+
+
+Apr 14, 2015 10:23:07 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-6.08725118637085
+2. row Transition weight  		-2.4683008193969727
+3. col Transition weight  		-8.758670806884766
+4. sum of well weight     		-5.023248672485352
+5. number of holes weight        -3.4525747299194336
+6. number of rows removed weight 1.517714500427246
+
+
+
+Apr 14, 2015 10:24:46 PM PlayerSkeleton run
+INFO: 
+
+You have completed 124063 rows.
+
+
+Apr 14, 2015 10:24:46 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.0872163772583008
+2. row Transition weight  		-3.691225051879883
+3. col Transition weight  		-9.09096908569336
+4. sum of well weight     		-9.341178894042969
+5. number of holes weight        -5.3487019538879395
+6. number of rows removed weight 3.952460289001465
+
+
+
+Apr 14, 2015 10:25:02 PM PlayerSkeleton run
+INFO: 
+
+You have completed 108065 rows.
+
+
+Apr 14, 2015 10:25:02 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.0872163772583008
+2. row Transition weight  		-3.691225051879883
+3. col Transition weight  		-9.09096908569336
+4. sum of well weight     		-9.341178894042969
+5. number of holes weight        -5.3487019538879395
+6. number of rows removed weight 3.952460289001465
+
+
+
+Apr 14, 2015 10:25:16 PM PlayerSkeleton run
+INFO: 
+
+You have completed 171004 rows.
+
+
+Apr 14, 2015 10:25:16 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.0872163772583008
+2. row Transition weight  		-3.691225051879883
+3. col Transition weight  		-9.09096908569336
+4. sum of well weight     		-9.341178894042969
+5. number of holes weight        -5.3487019538879395
+6. number of rows removed weight 3.952460289001465
+
+
+
+Apr 14, 2015 10:29:40 PM PlayerSkeleton run
+INFO: 
+
+You have completed 167697 rows.
+
+
+Apr 14, 2015 10:29:40 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.8438692092895508
+2. row Transition weight  		-1.1653270721435547
+3. col Transition weight  		-7.407721996307373
+4. sum of well weight     		-3.471684455871582
+5. number of holes weight        -1.553903579711914
+6. number of rows removed weight 4.891672611236572
+
+
+
+Apr 14, 2015 10:29:48 PM PlayerSkeleton run
+INFO: 
+
+You have completed 103594 rows.
+
+
+Apr 14, 2015 10:29:48 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.8438692092895508
+2. row Transition weight  		-1.1653270721435547
+3. col Transition weight  		-7.407721996307373
+4. sum of well weight     		-3.471684455871582
+5. number of holes weight        -1.553903579711914
+6. number of rows removed weight 4.891672611236572
+
+
+
+Apr 14, 2015 10:30:06 PM PlayerSkeleton run
+INFO: 
+
+You have completed 217722 rows.
+
+
+Apr 14, 2015 10:30:06 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.8438692092895508
+2. row Transition weight  		-1.1653270721435547
+3. col Transition weight  		-7.407721996307373
+4. sum of well weight     		-3.471684455871582
+5. number of holes weight        -1.553903579711914
+6. number of rows removed weight 4.891672611236572
+
+
+
+Apr 14, 2015 10:30:26 PM PlayerSkeleton run
+INFO: 
+
+You have completed 255055 rows.
+
+
+Apr 14, 2015 10:30:26 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.8438692092895508
+2. row Transition weight  		-1.1653270721435547
+3. col Transition weight  		-7.407721996307373
+4. sum of well weight     		-3.471684455871582
+5. number of holes weight        -1.553903579711914
+6. number of rows removed weight 4.891672611236572
+
+
+
+Apr 14, 2015 10:30:45 PM PlayerSkeleton run
+INFO: 
+
+You have completed 142066 rows.
+
+
+Apr 14, 2015 10:30:45 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.8438692092895508
+2. row Transition weight  		-1.1653270721435547
+3. col Transition weight  		-7.407721996307373
+4. sum of well weight     		-3.471684455871582
+5. number of holes weight        -1.553903579711914
+6. number of rows removed weight 4.891672611236572
+
+
+
+Apr 14, 2015 10:30:55 PM PlayerSkeleton run
+INFO: 
+
+You have completed 124912 rows.
+
+
+Apr 14, 2015 10:30:55 PM PlayerSkeleton run
+INFO: 
+
+----WEIGHTS----
+
+1. landing height weight  		-1.8438692092895508
+2. row Transition weight  		-1.1653270721435547
+3. col Transition weight  		-7.407721996307373
+4. sum of well weight     		-3.471684455871582
+5. number of holes weight        -1.553903579711914
+6. number of rows removed weight 4.891672611236572
 
 
 

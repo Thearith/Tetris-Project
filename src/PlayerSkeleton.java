@@ -34,30 +34,28 @@ public class PlayerSkeleton {
 	
 	static int index = 0;
 	
-	Logger logger;
-    FileHandler fh;
+	private final static Logger LOGGER = Logger.getLogger(PlayerSkeleton.class.getName());
+    static FileHandler fh;
 	
 	public PlayerSkeleton(double[] param) {
 		s = new State();
 		
 		weight = param;
+		   
 		
-		// set up a log file
-		logger = Logger.getLogger("MyLog");    
-		
-	    try {  
-
-	        fh = new FileHandler(LOG_FILE_PATH);  
-	        logger.addHandler(fh);
-	        SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter);  
-
-
-	    } catch (SecurityException e) {  
-	        e.printStackTrace();  
-	    } catch (IOException e) {  
-	        e.printStackTrace();  
-	    }
+//	    try {  
+//
+//	        fh = new FileHandler(LOG_FILE_PATH, true);  
+//	        LOGGER.addHandler(fh);
+//	        SimpleFormatter formatter = new SimpleFormatter();  
+//	        fh.setFormatter(formatter);  
+//
+//
+//	    } catch (SecurityException e) {  
+//	        e.printStackTrace();  
+//	    } catch (IOException e) {  
+//	        e.printStackTrace();  
+//	    }
 	    
 	}
 	
@@ -76,20 +74,20 @@ public class PlayerSkeleton {
 			
 		}
 		
-		if(s.getRowsCleared() >= MINIMUM_ROWS_CLEARED) {
-			String rowMsg = "\n\nYou have completed " + String.valueOf(s.getRowsCleared()) + " rows.\n\n";
-			logger.info(rowMsg);
-			
-			String weightMsg =
-					"\n\n----WEIGHTS----\n" +
-					"\n1. landing height weight  		" + String.valueOf(weight[0]) +
-					"\n2. row Transition weight  		" + String.valueOf(weight[1]) +
-					"\n3. col Transition weight  		" + String.valueOf(weight[2]) +
-					"\n4. sum of well weight     		" + String.valueOf(weight[3]) +
-					"\n5. number of holes weight        " + String.valueOf(weight[4]) +
-					"\n6. number of rows removed weight " + String.valueOf(weight[5]) + "\n\n\n";
-			logger.info(weightMsg);
-		}
+//		if(s.getRowsCleared() >= MINIMUM_ROWS_CLEARED) {
+//			String rowMsg = "\n\nYou have completed " + String.valueOf(s.getRowsCleared()) + " rows.\n\n";
+//			LOGGER.info(rowMsg);
+//			
+//			String weightMsg =
+//					"\n\n----WEIGHTS----\n" +
+//					"\n1. landing height weight  		" + String.valueOf(weight[0]) +
+//					"\n2. row Transition weight  		" + String.valueOf(weight[1]) +
+//					"\n3. col Transition weight  		" + String.valueOf(weight[2]) +
+//					"\n4. sum of well weight     		" + String.valueOf(weight[3]) +
+//					"\n5. number of holes weight        " + String.valueOf(weight[4]) +
+//					"\n6. number of rows removed weight " + String.valueOf(weight[5]) + "\n\n\n";
+//			LOGGER.info(weightMsg);
+//		}
 	}
 	
 	public int getRowsCleared(){

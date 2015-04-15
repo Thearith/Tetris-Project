@@ -21,11 +21,11 @@ public class GeneticAlgorithm {
 			Candidate c = new Candidate();
 			c.random();
 			population.add(c);
-			System.out.println("add new candidate");
+			//System.out.println("add new candidate");
 		}
-		System.out.println("out of for loop");
+		//System.out.println("out of for loop");
 		//Collections.sort(population);	// sort method
-		System.out.println("population completed");
+		//System.out.println("population completed");
 	}
 	
 	LinkedList<Candidate> getBestTen() {
@@ -57,7 +57,7 @@ public class GeneticAlgorithm {
 	}
 	
 	void produceNextGen() {
-		System.out.println("producing new generation");
+		//System.out.println("producing new generation");
 		LinkedList<Candidate> newpopulation = new LinkedList<Candidate>();
 		initTraversal();
 		
@@ -96,17 +96,17 @@ public class GeneticAlgorithm {
 			float f3 = c3.fitness();
 			float f4 = c4.fitness();
 			
-			System.out.println("f1 is " + f1);
-			System.out.println("f2 is " + f2);
-			System.out.println("f3 is " + f3);
-			System.out.println("f4 is " + f4);
+			//System.out.println("f1 is " + f1);
+			//System.out.println("f2 is " + f2);
+			//System.out.println("f3 is " + f3);
+			//System.out.println("f4 is " + f4);
 			
 			resultScore.set(i, f1);
 			resultScore.set(j, f2);
 			resultScore.set(k, f3);
 			resultScore.set(l, f4);
 			
-			System.out.println("tournament");
+			//System.out.println("tournament");
 			
 			Candidate w1, w2;
 			if (f1 > f2) w1 = c1; else w1 = c2;
@@ -127,8 +127,8 @@ public class GeneticAlgorithm {
 			boolean isChild1Good = child1.fitness() >= w1.fitness();
 			boolean isChild2Good = child2.fitness() >= w2.fitness();
 			
-			if (isChild1Good) System.out.println("add child1"); else System.out.println("add w1");
-			if (isChild2Good) System.out.println("add child2"); else System.out.println("add w2");
+			//if (isChild1Good) System.out.println("add child1"); else System.out.println("add w1");
+			//if (isChild2Good) System.out.println("add child2"); else System.out.println("add w2");
 			
 			newpopulation.add(isChild1Good ? child1 : w1);
 			newpopulation.add(isChild2Good ? child2 : w2);

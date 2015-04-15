@@ -1,26 +1,21 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.File;
+import java.util.logging.LogManager;
 
 public class Tetris {
 	
-	//public TFrame frame;
-	
 	public static void main(String[] args) {
-		//State s = new State();
-		//new TFrame(s);
 		
 		double[] optimalWeights = new double[4];
-		System.out.println("creating population");
 		GeneticAlgorithm pop = new GeneticAlgorithm();
-		System.out.println("producing new generations");
+		
 		for (int i=0; i < 10; i++) {
-			System.out.println("This is the generation #");
-			System.out.println(i);
+			System.out.println("This is the generation # " + i);
 			pop.produceNextGen();
 		}
 		
-		System.out.println("Checking for the best candidates");
+		//System.out.println("Checking for the best candidates");
 		
 		try {
 			PrintWriter writer = new PrintWriter("best_candidates.txt");
