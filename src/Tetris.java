@@ -27,6 +27,8 @@ public class Tetris {
 			producedWeights[i] = c.weights;
 			for(int j=0; j<WEIGHTS; j++)
 				System.out.println("Weight " + j + " " + producedWeights[i][j]);
+			float rowsCleared = pop.getFittestResult();
+			System.out.println("which helped to clear" + rowsCleared);
 		}
 		
 		//System.out.println("Checking for the best candidates");
