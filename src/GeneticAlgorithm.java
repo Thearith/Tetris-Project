@@ -23,28 +23,9 @@ public class GeneticAlgorithm {
 		}
 	}
 	
-	LinkedList<Candidate> getBestTen() {
-		return population;
-	}
 	
 	Candidate getFittest() {
-		float[] fitness = new float[populationSize];
-		
-		for(int i=0; i<populationSize; i++) {
-			System.out.println("Calculating fitness " + i);
-			fitness[i] = population.get(i).fitness();
-			System.out.println("Calculating fitness " + fitness[i]);
-		}
-		
-		int fittestIndex = 0;
-		float fittest = fitness[0];
-		for (int i=1; i < populationSize; i++) {
-			if(fittest < fitness[i]) {
-				fittest = fitness[i];
-				fittestIndex = i;
-			}
-		}
-		
+		int fittestIndex = resultScore.indexOf(Collections.max(resultScore));
 		return population.get(fittestIndex);
 	}
 	
@@ -95,10 +76,11 @@ public class GeneticAlgorithm {
 			Candidate c3 = population.get(k);
 			Candidate c4 = population.get(l);
 			
-			float f1 = c1.fitness();
-			float f2 = c2.fitness();
-			float f3 = c3.fitness();
-			float f4 = c4.fitness();
+			float f1, f2, f3, f4;
+			if (!hasParticipated.get(i)) f1 = c1.fitness(); else f1 = resultScore.get(i);
+			if (!hasParticipated.get(j)) f2 = c2.fitness(); else f2 = resultScore.get(j);
+			if (!hasParticipated.get(k)) f3 = c3.fitness(); else f3 = resultScore.get(k);
+			if (!hasParticipated.get(l)) f4 = c4.fitness(); else f4 = resultScore.get(l);
 			
 			resultScore.set(i, f1);
 			resultScore.set(j, f2);
@@ -106,8 +88,21 @@ public class GeneticAlgorithm {
 			resultScore.set(l, f4);
 			
 			Candidate w1, w2;
-			if (f1 > f2) w1 = c1; else w1 = c2;
-			if (f3 > f4) w2 = c3; else w2 = c4;
+			int w1Index, w2Index;
+			if (f1 > f2) {
+				w1 = c1;
+				w1Index = i;
+			}else { 
+				w1 = c2;
+				w1Index = j;
+			}
+			if (f3 > f4) {
+				w2 = c3;
+				w2Index = k;
+			} else {
+				w2 = c4;
+				w2Index = l;
+			}
 			
 			Candidate child1, child2;
 			
@@ -121,8 +116,8 @@ public class GeneticAlgorithm {
 			if (m1) mutate(child1);
 			if (m2) mutate(child2);
 			
-			boolean isChild1Good = child1.fitness() >= w1.fitness();
-			boolean isChild2Good = child2.fitness() >= w2.fitness();
+			boolean isChild1Good = child1.fitness() >= resultScore.get(w1Index);
+			boolean isChild2Good = child2.fitness() >= resultScore.get(w2Index);
 			
 			newpopulation.add(isChild1Good ? child1 : w1);
 			newpopulation.add(isChild2Good ? child2 : w2);
@@ -150,7 +145,11 @@ public class GeneticAlgorithm {
 	
 	void mutate(Candidate c) {
 		int i = rand.nextInt(Candidate.SIZE);
-		c.weights[i] = rand.nextFloat() * (1.0f - 0.0f) + 0.0f;
+		if (i == Candidate.SIZE-1) {
+			c.weights[i] = rand.nextFloat() * (5.0f - 0.0f) + 0.0f;
+		} else {
+			c.weights[i] = rand.nextFloat() * (10.0f - 0.0f) - 10.0f;
+		}
 	}
 	
 	Candidate[] newChilds(Candidate c1, Candidate c2) {
