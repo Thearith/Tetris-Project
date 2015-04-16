@@ -29,6 +29,10 @@ public class GeneticAlgorithm {
 		return population.get(fittestIndex);
 	}
 	
+	float getFittestResult() {
+		return Collections.max(resultScore);
+	}
+	
 	boolean hasAllParticipated() {
 		for (int i=0; i<population.size(); i++) {
 			if (hasParticipated.get(i) == false) return false;
