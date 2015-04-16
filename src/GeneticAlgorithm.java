@@ -30,7 +30,8 @@ public class GeneticAlgorithm {
 	}
 	
 	float getFittestResult() {
-		return Collections.max(resultScore);
+		float fittestResult = Collections.max(resultScore);
+		return fittestResult;
 	}
 	
 	boolean hasAllParticipated() {
@@ -44,7 +45,7 @@ public class GeneticAlgorithm {
 		hasParticipated.clear();
 		hasParticipated.addAll(Collections.nCopies(population.size(), false));
 		resultScore.clear();
-		resultScore.addAll(Collections.nCopies(population.size(), 0.0f));
+		resultScore.addAll(Collections.nCopies(populationSize, 0.0f));
 	}
 	
 	void produceNextGen() {
@@ -69,27 +70,40 @@ public class GeneticAlgorithm {
 				while (k == i || k == j) k = rand.nextInt(size);
 				while (l == i || l == j || k == l) l = rand.nextInt(size);
 			}
-			
-			hasParticipated.set(i, true);
-			hasParticipated.set(j, true);
-			hasParticipated.set(k, true);
-			hasParticipated.set(l, true);
-			
+				
 			Candidate c1 = population.get(i);
 			Candidate c2 = population.get(j);
 			Candidate c3 = population.get(k);
 			Candidate c4 = population.get(l);
 			
 			float f1, f2, f3, f4;
-			if (!hasParticipated.get(i)) f1 = c1.fitness(); else f1 = resultScore.get(i);
-			if (!hasParticipated.get(j)) f2 = c2.fitness(); else f2 = resultScore.get(j);
-			if (!hasParticipated.get(k)) f3 = c3.fitness(); else f3 = resultScore.get(k);
-			if (!hasParticipated.get(l)) f4 = c4.fitness(); else f4 = resultScore.get(l);
+			if (!hasParticipated.get(i)) { 
+				f1 = c1.fitness();
+				resultScore.set(i, f1);
+				hasParticipated.set(i, true);
+			}	else 
+				f1 = resultScore.get(i);
 			
-			resultScore.set(i, f1);
-			resultScore.set(j, f2);
-			resultScore.set(k, f3);
-			resultScore.set(l, f4);
+			if (!hasParticipated.get(j)) {
+				f2 = c2.fitness(); 
+				hasParticipated.set(j, true);
+				resultScore.set(j, f2);
+			} else
+				f2 = resultScore.get(j);
+			
+			if (!hasParticipated.get(k)) {
+				f3 = c3.fitness(); 
+				hasParticipated.set(k, true);
+				resultScore.set(k, f3);
+			} else 
+				f3 = resultScore.get(k);
+		
+			if (!hasParticipated.get(l)) {
+				f4 = c4.fitness(); 
+				hasParticipated.set(l, true);
+				resultScore.set(l, f4);
+			} else 
+				f4 = resultScore.get(l);	
 			
 			Candidate w1, w2;
 			int w1Index, w2Index;
