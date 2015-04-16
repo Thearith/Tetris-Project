@@ -16,14 +16,16 @@ public class PlayerSkeleton {
 	private State s = null;
 	private TFrame f = null;
 	
-	private double[] weight = {
-		-4.500158825082766,
-		-3.2178882868487753,
-		-9.348695305445199,
-		-7.899265427351652,
-		-3.3855972247263626,
-		3.4181268101392694
-	};
+//	private double[] weight = {
+//		-4.500158825082766,
+//		-3.2178882868487753,
+//		-9.348695305445199,
+//		-7.899265427351652,
+//		-3.3855972247263626,
+//		3.4181268101392694
+//	};
+	
+	private double[] weight;
 
 	private static final int LANDING_HEIGHTS_INDEX = 0;
 	private static final int ROWS_TRANSITION_INDEX = 1;
@@ -41,53 +43,19 @@ public class PlayerSkeleton {
 		s = new State();
 		
 		weight = param;
-		   
-		
-//	    try {  
-//
-//	        fh = new FileHandler(LOG_FILE_PATH, true);  
-//	        LOGGER.addHandler(fh);
-//	        SimpleFormatter formatter = new SimpleFormatter();  
-//	        fh.setFormatter(formatter);  
-//
-//
-//	    } catch (SecurityException e) {  
-//	        e.printStackTrace();  
-//	    } catch (IOException e) {  
-//	        e.printStackTrace();  
-//	    }
-	    
 	}
 	
 	public void run() {
-		//State s = new State();
-		//new TFrame(s);
-		
+			
 		while(!s.hasLost()) {
 			
 			int move = this.pickMove(s, s.legalMoves());
-			index++;
 			
 			if(move < 0) // every move will lose the game
 				break;
 			s.makeMove(move);
 			
 		}
-		
-//		if(s.getRowsCleared() >= MINIMUM_ROWS_CLEARED) {
-//			String rowMsg = "\n\nYou have completed " + String.valueOf(s.getRowsCleared()) + " rows.\n\n";
-//			LOGGER.info(rowMsg);
-//			
-//			String weightMsg =
-//					"\n\n----WEIGHTS----\n" +
-//					"\n1. landing height weight  		" + String.valueOf(weight[0]) +
-//					"\n2. row Transition weight  		" + String.valueOf(weight[1]) +
-//					"\n3. col Transition weight  		" + String.valueOf(weight[2]) +
-//					"\n4. sum of well weight     		" + String.valueOf(weight[3]) +
-//					"\n5. number of holes weight        " + String.valueOf(weight[4]) +
-//					"\n6. number of rows removed weight " + String.valueOf(weight[5]) + "\n\n\n";
-//			LOGGER.info(weightMsg);
-//		}
 	}
 	
 	public int getRowsCleared(){
@@ -126,12 +94,9 @@ public class PlayerSkeleton {
 			int maxHeight = getMaxHeight(top); // get max height
 			int pieceHeight = getPieceHeight(s.getNextPiece(), legalMoves[i][State.ORIENT]); 
 			
-			//int numRowsRemoved = getNumberRowsRemoved(field, top, maxHeight);
 			double heuristics = getHeuristics(field, top, maxHeight, 
 					pieceHeight, pieceLandingHeight);
 			
-//				double cost = weight[ROWS_COMPLETED_INDEX]* numRowsRemoved 
-//						+ heuristics;
 			double cost = heuristics;
 					
 			if(max < cost) {
@@ -140,7 +105,6 @@ public class PlayerSkeleton {
 			}
 		}
 		
-		//System.out.println("move made is " + move);
 		return move;
 
 	}
@@ -188,7 +152,7 @@ public class PlayerSkeleton {
 	}
 	
 	/*
-	 * Utility function
+	 * Helper function
 	 * */
 	
 	/*
@@ -233,18 +197,18 @@ public class PlayerSkeleton {
 
 	
 	/*
-	 * Feature Heuristics functions
+	 * Feature Heuristics utility functions
 	 * */
 	
 	private double getHeuristics(int[][] field, int[] top, int maxHeight,
 			int pieceHeight, int bottom) {
 		
 		double sum  = 	weight[LANDING_HEIGHTS_INDEX] * landingHeights(bottom, pieceHeight)
-					  + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight)
 				      + weight[ROWS_TRANSITION_INDEX] * rowTransitions(field, maxHeight)
 				      + weight[COLS_TRANSITION_INDEX] * columnTransitions(field, top)
 				      + weight[NUM_HOLES_INDEX] * numberOfHoles(field, maxHeight)
-				      + weight[WELL_SUMS_INDEX] * wellSum(field, top);		
+				      + weight[WELL_SUMS_INDEX] * wellSum(field, top)
+					  + weight[ROWS_COMPLETED_INDEX] * getNumberRowsRemoved(field, top, maxHeight);		
 		return sum;
 	}
 	

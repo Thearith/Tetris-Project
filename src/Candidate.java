@@ -2,17 +2,12 @@ import java.util.Random;
 
 public class Candidate implements Comparable<Candidate>{
 	public static final int SIZE = 6;
-	public double[] weights = {
-			-4.500158825082766,
-			-3.2178882868487753,
-			-9.348695305445199,
-			-7.899265427351652,
-			-3.3855972247263626,
-			3.4181268101392694 
-	};
+	public double[] weights;
+	
 	final Random rand = new Random();
 	
 	public Candidate() {
+		weights = new double[SIZE];
 	}
 	
 	void random() {

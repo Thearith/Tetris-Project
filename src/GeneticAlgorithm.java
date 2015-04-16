@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
 import java.util.LinkedList;
@@ -21,11 +20,7 @@ public class GeneticAlgorithm {
 			Candidate c = new Candidate();
 			c.random();
 			population.add(c);
-			//System.out.println("add new candidate");
 		}
-		//System.out.println("out of for loop");
-		//Collections.sort(population);	// sort method
-		//System.out.println("population completed");
 	}
 	
 	LinkedList<Candidate> getBestTen() {
@@ -33,13 +28,24 @@ public class GeneticAlgorithm {
 	}
 	
 	Candidate getFittest() {
-		Candidate fittest = population.get(0);
+		float[] fitness = new float[populationSize];
+		
+		for(int i=0; i<populationSize; i++) {
+			System.out.println("Calculating fitness " + i);
+			fitness[i] = population.get(i).fitness();
+			System.out.println("Calculating fitness " + fitness[i]);
+		}
+		
+		int fittestIndex = 0;
+		float fittest = fitness[0];
 		for (int i=1; i < populationSize; i++) {
-			if(fittest.fitness() < population.get(i).fitness()) {
-				fittest = population.get(i);
+			if(fittest < fitness[i]) {
+				fittest = fitness[i];
+				fittestIndex = i;
 			}
 		}
-		return fittest;
+		
+		return population.get(fittestIndex);
 	}
 	
 	boolean hasAllParticipated() {
@@ -57,18 +63,16 @@ public class GeneticAlgorithm {
 	}
 	
 	void produceNextGen() {
-		//System.out.println("producing new generation");
+		
 		LinkedList<Candidate> newpopulation = new LinkedList<Candidate>();
 		initTraversal();
 		
-		//while (newpopulation.size() < populationSize * (1.0 - (parentUsePercent / 100.0))) {
 		while (newpopulation.size() < populationSize * (1.0 - (parentUsePercent / 100.0))) {
 			int size = population.size();
 			int i, j, k, l;
 			i = rand.nextInt(size);
 			j = k = l = i;
 			if (!hasAllParticipated()) {
-				//do { i = rand.nextInt(size);} while (hasParticipated.get(i));
 				while (hasParticipated.get(i)) i = rand.nextInt(size);
 				j = k = l = i;
 				
@@ -96,17 +100,10 @@ public class GeneticAlgorithm {
 			float f3 = c3.fitness();
 			float f4 = c4.fitness();
 			
-			//System.out.println("f1 is " + f1);
-			//System.out.println("f2 is " + f2);
-			//System.out.println("f3 is " + f3);
-			//System.out.println("f4 is " + f4);
-			
 			resultScore.set(i, f1);
 			resultScore.set(j, f2);
 			resultScore.set(k, f3);
 			resultScore.set(l, f4);
-			
-			//System.out.println("tournament");
 			
 			Candidate w1, w2;
 			if (f1 > f2) w1 = c1; else w1 = c2;
@@ -127,13 +124,10 @@ public class GeneticAlgorithm {
 			boolean isChild1Good = child1.fitness() >= w1.fitness();
 			boolean isChild2Good = child2.fitness() >= w2.fitness();
 			
-			//if (isChild1Good) System.out.println("add child1"); else System.out.println("add w1");
-			//if (isChild2Good) System.out.println("add child2"); else System.out.println("add w2");
-			
 			newpopulation.add(isChild1Good ? child1 : w1);
 			newpopulation.add(isChild2Good ? child2 : w2);
 		}
-		// Use only top 10% from the parent generation for the next generation
+		
 		int j = (int) (populationSize * parentUsePercent / 100.0);
 		for (int i=0; i < j; i++) {
 			int index = resultScore.indexOf(Collections.max(resultScore));
@@ -141,7 +135,6 @@ public class GeneticAlgorithm {
 			population.remove(index);
 		}
 		population = newpopulation;
-		//Collections.sort(population);
 	}
 	
 	Candidate newChild(Candidate c1, Candidate c2, int pivot) {

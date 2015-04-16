@@ -396,5 +396,16 @@ INFO:
 5. number of holes weight        -1.553903579711914
 6. number of rows removed weight 4.891672611236572
 
-
+0 You have completed 114923 rows.
+1 You have completed 364114 rows.
+2 You have completed 534348 rows.
+3 You have completed 4049010 rows.
+4 You have completed 91189 rows.
+5 You have completed 542647 rows.
+6 You have completed 1667953 rows.
+7 You have completed 2025309 rows.
+8 You have completed 1075047 rows.
+9 You have completed 822224 rows.
+10 You have completed 1848281 rows.
+Average Number of rows 1313504.5
 
