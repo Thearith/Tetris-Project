@@ -10,20 +10,67 @@ public class GeneticAlgorithm {
 	Vector< Boolean > hasParticipated = new Vector< Boolean >();
 	Vector< Float > resultScore_curr_gen = new Vector< Float >();
 	Vector< Float > resultScore_next_gen = new Vector< Float >();
+	
+	LinkedList<Candidate> expPopulation = new LinkedList<Candidate>();
+	Vector< Float > expResults = new Vector< Float >();
+	Vector< Double > expWeightRange = new Vector< Double >();
 	final Random rand = new Random();
 	
-	final int populationSize = 60;
+	final int populationSize = 20;
 	final int parentUsePercent = 10;
 	
 	public GeneticAlgorithm() {
-		
+		//initialise();
+		//expWeightRange = [-3.75, -1.25, -8.75, -8.75, -3.75, 6.25];
+		expWeightRange.add(-3.75);
+		expWeightRange.add(-1.25);
+		expWeightRange.add(-8.75);
+		expWeightRange.add(-8.75);
+		expWeightRange.add(-3.75);
+		expWeightRange.add(6.25);
 		for (int i=0; i < populationSize; i++) {
-			Candidate c = new Candidate();
+			Candidate c = new Candidate(expWeightRange);
 			c.random();
 			population.add(c);
 		}
 	}
 	
+	void initialise() {
+		System.out.println("initialising");
+		expResults.addAll(Collections.nCopies(4096, 0.0f));
+		expWeightRange.addAll(Collections.nCopies(6, 0.0d));
+		
+		for(float i = -1.25f; i > -10; i -= 2.5)
+			for(float j = -1.25f; j > -10; j -= 2.5)
+				for(float k = -1.25f; k > -10; k -= 2.5)
+					for(float l = -1.25f; l > -10; l -= 2.5)
+						for(float m = -1.25f; m > -10; m -= 2.5)
+							for(float n = 1.25f; n < 10; n += 2.5) {
+								float[] expWeight = new float[] {i, j, k, l, m, n};
+								Candidate c = new Candidate(expWeight);
+								expPopulation.add(c);
+							}
+		System.out.println("testing");
+		for(int i=0; i<expPopulation.size(); i++) {
+			Candidate c = expPopulation.get(i);
+			float result = c.fitness();
+			expResults.set(i, result);
+			System.out.println(i);
+		}
+		
+		System.out.println("weeding");
+//		for(int i=0; i<populationSize; i++) {
+//			int index = expResults.indexOf(Collections.max(expResults));
+//			population.add(expPopulation.get(index));
+//			expPopulation.remove(index);
+//			expResults.remove(index);
+//		}
+		int index = expResults.indexOf(Collections.max(expResults));
+		Candidate c = expPopulation.get(index);
+		System.out.println("optimum range is +/- 1.25 of " + c.weights[0] + " " + c.weights[1] + " " + c.weights[2] + " " + c.weights[3] + " " + c.weights[4] + " " + c.weights[5]);
+		for (int i=0; i<6; i++)
+			expWeightRange.set(i, c.weights[i]);
+	}
 	
 	Candidate getFittest() {
 		int fittestIndex = resultScore_next_gen.indexOf(Collections.max(resultScore_next_gen));
@@ -158,7 +205,7 @@ public class GeneticAlgorithm {
 	}
 	
 	Candidate newChild(Candidate c1, Candidate c2, int pivot) {
-		Candidate child = new Candidate();
+		Candidate child = new Candidate(expWeightRange);
 		for (int i=0; i < pivot; i++) {
 			child.weights[i] = c1.weights[i];
 		}
@@ -170,16 +217,12 @@ public class GeneticAlgorithm {
 	
 	void mutate(Candidate c) {
 		int i = rand.nextInt(Candidate.SIZE);
-		if (i == Candidate.SIZE-1) {
-			c.weights[i] = rand.nextFloat() * (5.0f - 0.0f) + 0.0f;
-		} else {
-			c.weights[i] = rand.nextFloat() * (10.0f - 0.0f) - 10.0f;
-		}
+		c.weights[i] = rand.nextFloat() * (2.5f - 0.0f) + expWeightRange.get(i) - 1.25f;
 	}
 	
 	Candidate[] newChilds(Candidate c1, Candidate c2) {
-		Candidate child1 = new Candidate();
-		Candidate child2 = new Candidate();
+		Candidate child1 = new Candidate(expWeightRange);
+		Candidate child2 = new Candidate(expWeightRange);
 		
 		for (int i=0; i < Candidate.SIZE; i++) {
 			boolean b = rand.nextFloat() >= 0.5;
