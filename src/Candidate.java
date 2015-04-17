@@ -1,20 +1,30 @@
+import java.util.Collections;
 import java.util.Random;
+import java.util.Vector;
 
 public class Candidate implements Comparable<Candidate>{
 	public static final int SIZE = 6;
 	public double[] weights;
+	Vector< Double > centreWeightRange = new Vector <Double>();
 	
 	final Random rand = new Random();
 	
-	public Candidate() {
+	public Candidate(Vector <Double> expWeightRange) {
 		weights = new double[SIZE];
+		centreWeightRange = expWeightRange;
+	}
+	
+	public Candidate(float[] expWeight) {
+		weights = new double[SIZE];
+		for (int i=0; i < SIZE; i++) {
+			weights[i] = expWeight[i];
+		}
 	}
 	
 	void random() {
-		for (int i=0; i < weights.length - 1; i++) {
-			weights[i] = rand.nextFloat() * (10.0f - 0.0f) - 10.0f;
+		for (int i=0; i < SIZE; i++) {
+			weights[i] = rand.nextFloat() * (2.5f - 0.0f) + centreWeightRange.get(i) - 1.25f;
 		}
-		weights[SIZE-1] = rand.nextFloat() * (5.0f - 0.0f) + 0.0f;
 	}
 	
 	float fitness() {
