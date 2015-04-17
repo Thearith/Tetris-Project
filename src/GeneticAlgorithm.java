@@ -8,7 +8,8 @@ public class GeneticAlgorithm {
 	//static final boolean _DEBUG = true;
 	LinkedList<Candidate> population = new LinkedList<Candidate>();
 	Vector< Boolean > hasParticipated = new Vector< Boolean >();
-	Vector< Float > resultScore = new Vector< Float >();
+	Vector< Float > resultScore_curr_gen = new Vector< Float >();
+	Vector< Float > resultScore_next_gen = new Vector< Float >();
 	final Random rand = new Random();
 	
 	final int populationSize = 60;
@@ -25,12 +26,12 @@ public class GeneticAlgorithm {
 	
 	
 	Candidate getFittest() {
-		int fittestIndex = resultScore.indexOf(Collections.max(resultScore));
+		int fittestIndex = resultScore_next_gen.indexOf(Collections.max(resultScore_next_gen));
 		return population.get(fittestIndex);
 	}
 	
 	float getFittestResult() {
-		float fittestResult = Collections.max(resultScore);
+		float fittestResult = Collections.max(resultScore_curr_gen);
 		return fittestResult;
 	}
 	
@@ -43,9 +44,10 @@ public class GeneticAlgorithm {
 	
 	void initTraversal() {
 		hasParticipated.clear();
-		hasParticipated.addAll(Collections.nCopies(population.size(), false));
-		resultScore.clear();
-		resultScore.addAll(Collections.nCopies(populationSize, 0.0f));
+		hasParticipated.addAll(Collections.nCopies(populationSize, false));
+		resultScore_curr_gen.clear();
+		resultScore_curr_gen.addAll(Collections.nCopies(populationSize, 0.0f));
+		resultScore_next_gen.clear();
 	}
 	
 	void produceNextGen() {
@@ -79,31 +81,31 @@ public class GeneticAlgorithm {
 			float f1, f2, f3, f4;
 			if (!hasParticipated.get(i)) { 
 				f1 = c1.fitness();
-				resultScore.set(i, f1);
+				resultScore_curr_gen.set(i, f1);
 				hasParticipated.set(i, true);
 			}	else 
-				f1 = resultScore.get(i);
+				f1 = resultScore_curr_gen.get(i);
 			
 			if (!hasParticipated.get(j)) {
 				f2 = c2.fitness(); 
 				hasParticipated.set(j, true);
-				resultScore.set(j, f2);
+				resultScore_curr_gen.set(j, f2);
 			} else
-				f2 = resultScore.get(j);
+				f2 = resultScore_curr_gen.get(j);
 			
 			if (!hasParticipated.get(k)) {
 				f3 = c3.fitness(); 
 				hasParticipated.set(k, true);
-				resultScore.set(k, f3);
+				resultScore_curr_gen.set(k, f3);
 			} else 
-				f3 = resultScore.get(k);
+				f3 = resultScore_curr_gen.get(k);
 		
 			if (!hasParticipated.get(l)) {
 				f4 = c4.fitness(); 
 				hasParticipated.set(l, true);
-				resultScore.set(l, f4);
+				resultScore_curr_gen.set(l, f4);
 			} else 
-				f4 = resultScore.get(l);	
+				f4 = resultScore_curr_gen.get(l);	
 			
 			Candidate w1, w2;
 			int w1Index, w2Index;
@@ -134,18 +136,23 @@ public class GeneticAlgorithm {
 			if (m1) mutate(child1);
 			if (m2) mutate(child2);
 			
-			boolean isChild1Good = child1.fitness() >= resultScore.get(w1Index);
-			boolean isChild2Good = child2.fitness() >= resultScore.get(w2Index);
+			float child1Fitness = child1.fitness();
+			float child2Fitness = child2.fitness();
+			boolean isChild1Good = child1Fitness >= resultScore_curr_gen.get(w1Index);
+			boolean isChild2Good = child2Fitness >= resultScore_curr_gen.get(w2Index);
 			
 			newpopulation.add(isChild1Good ? child1 : w1);
 			newpopulation.add(isChild2Good ? child2 : w2);
+			resultScore_next_gen.add(isChild1Good? child1Fitness : resultScore_curr_gen.get(w1Index));
+			resultScore_next_gen.add(isChild2Good? child2Fitness : resultScore_curr_gen.get(w2Index));
 		}
 		
 		int j = (int) (populationSize * parentUsePercent / 100.0);
 		for (int i=0; i < j; i++) {
-			int index = resultScore.indexOf(Collections.max(resultScore));
+			int index = resultScore_curr_gen.indexOf(Collections.max(resultScore_curr_gen));
 			newpopulation.add(population.get(index));
 			population.remove(index);
+			resultScore_curr_gen.remove(index);
 		}
 		population = newpopulation;
 	}
